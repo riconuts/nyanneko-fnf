@@ -191,8 +191,9 @@ class GameOverSubstate extends MusicBeatSubstate
 				FlxTween.cancelTweensOf(genericBitch);
 				FlxTween.tween(genericBitch, {alpha: 0, "scale.x": 0, "scale.y": 0}, 100/120, {ease: FlxEase.quadIn, onComplete: (_)->{remove(genericBitch).destroy();}});
 			}
-			
-			FlxG.sound.music.stop();
+
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.music(endSoundName));
 
 			new FlxTimer().start(0.7, function(tmr:FlxTimer){
@@ -238,7 +239,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			}
 		}
 
-		if (FlxG.sound.music.playing)
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			Conductor.songPosition = FlxG.sound.music.time;
 		
 		PlayState.instance.callOnScripts('onUpdatePost', [elapsed]);

@@ -69,7 +69,7 @@ class ComboOffsetSubstate extends MusicBeatSubstate{
 
 
         timingTxt = new FlxText(0, 0, 0, "0 ms");
-		timingTxt.setFormat(Paths.font("calibri.ttf"), 28, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
+		timingTxt.setFormat(Paths.font("segoepr.ttf"), 28, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
         timingTxt.color = ratingColor;
         timingTxt.scrollFactor.set();
 		timingTxt.borderSize = 1.25;

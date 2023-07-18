@@ -114,7 +114,7 @@ class StoryMenuState extends MusicBeatState
 
 			var yellowBorder = new FlxShapeBox(xPos - 3, yPos - 3, 200, 200, {thickness: 6, color: 0xFFF4CC34}, FlxColor.TRANSPARENT);
 			var textTitle = new FlxText(xPos - 3, yPos - 30, 206, chapData.name, 12);
-			textTitle.setFormat(Paths.font("calibri.ttf"), 18, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
+			textTitle.setFormat(Paths.font("segoepr.ttf"), 18, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
 
 			if (isLocked){
 				newButton.onUp.callback = function(){

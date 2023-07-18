@@ -705,7 +705,7 @@ class ClientPrefs
 		if (Main.fpsVar != null)
 			Main.fpsVar.visible = ClientPrefs.showFPS;
 
-		FlxSprite.defaultAntialiasing = ClientPrefs.globalAntialiasing;
+		FlxSprite.defaultAntialiasing = false;//ClientPrefs.globalAntialiasing;
 
 		if (framerate > FlxG.drawFramerate)
 		{

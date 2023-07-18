@@ -98,9 +98,11 @@ class StrumNote extends NoteObject
 		animation.addByPrefix('blue', 'arrowDOWN');
 		animation.addByPrefix('purple', 'arrowLEFT');
 		animation.addByPrefix('red', 'arrowRIGHT');
-
-		antialiasing = ClientPrefs.globalAntialiasing;
-		setGraphicSize(Std.int(width * 0.7));
+		
+		if (this.noteData > 0 && this.noteData < 3)
+			this.setGraphicSize(134, 112);
+		else
+			this.setGraphicSize(112, 134);	
 
 		// TODO: proper multi-key support
 		switch (Math.abs(noteData) % 4)

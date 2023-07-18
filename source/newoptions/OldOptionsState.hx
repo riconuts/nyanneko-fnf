@@ -424,7 +424,7 @@ class OptionsState extends MusicBeatState {
             button.alpha = 0.75;
 
             var text = new FlxText(button.x, button.y, 0, name.toUpperCase(), 16);
-			text.setFormat(Paths.font("calibrib.ttf"), 32, 0xFFFFFFFF, FlxTextAlign.CENTER);
+			text.setFormat(Paths.font("segoeprb.ttf"), 32, 0xFFFFFFFF, FlxTextAlign.CENTER);
 			var width = text.fieldWidth < 86 ? 86 : text.fieldWidth;
 			button.setGraphicSize(Std.int(width + 8), Std.int(button.height));
             button.updateHitbox();
@@ -450,7 +450,7 @@ class OptionsState extends MusicBeatState {
                 var label = data[0];
                 var daOpts:Array<String> = data[1];
                 var text = new FlxText(8, daY, 0, label, 16);
-                text.setFormat(Paths.font("calibrib.ttf"), 32, 0xFFFFFFFF, FlxTextAlign.LEFT);
+                text.setFormat(Paths.font("segoeprb.ttf"), 32, 0xFFFFFFFF, FlxTextAlign.LEFT);
 				text.cameras = [optionCamera];
 				group.add(text);
                 daY += text.height;
@@ -460,7 +460,7 @@ class OptionsState extends MusicBeatState {
                     data.data.set("optionName", opt);
                     var text = new FlxText(16, daY, 0, data.display, 16);
 					text.cameras = [optionCamera];
-                    text.setFormat(Paths.font("calibri.ttf"), 28, 0xFFFFFFFF, FlxTextAlign.LEFT);
+                    text.setFormat(Paths.font("segoepr.ttf"), 28, 0xFFFFFFFF, FlxTextAlign.LEFT);
                     var height = text.height + 12;
                     if(height < 45)height = 45;
                     var drop:FlxUI9SliceSprite = new FlxUI9SliceSprite(text.x - 12, text.y, Paths.image("optionsMenu/backdrop"), new Rectangle(0, 0, optionMenu.width - text.x - 8, height),
@@ -536,7 +536,7 @@ class OptionsState extends MusicBeatState {
 				checkbox.scale.set(0.65, 0.65);
                 checkbox.updateHitbox();
 				var text = new FlxText(0, 0, 0, "off", 16);
-				text.setFormat(Paths.font("calibri.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
+				text.setFormat(Paths.font("segoepr.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
                 // trace(data.value);
 				checkbox.toggled = data.value != null ? cast data.value : false;
 
@@ -569,13 +569,13 @@ class OptionsState extends MusicBeatState {
 					dV = options[0];
                 
 				var label = new FlxText(0, 0, 0, dV, 16);
-				label.setFormat(Paths.font("calibri.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
+				label.setFormat(Paths.font("segoepr.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
                 
 				for (idx in 0...options.length){
 					var l = options[idx];
 					var text = new FlxText(8 + 4, daY + 4, 0, l, 16);
 					text.cameras = [daCamera];
-					text.setFormat(Paths.font("calibri.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
+					text.setFormat(Paths.font("segoepr.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
 					var height = 35;
 					var width = text.width + 8;
                     if(width < 50)
@@ -657,7 +657,7 @@ class OptionsState extends MusicBeatState {
                 objects.add(bar);
 
 				var text = new FlxText(0, 0, 0, "off", 16);
-				text.setFormat(Paths.font("calibri.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
+				text.setFormat(Paths.font("segoepr.ttf"), 24, 0xFFFFFFFF, FlxTextAlign.LEFT);
 				objects.add(text);
 
 				var leftAdjust = new WidgetButton();

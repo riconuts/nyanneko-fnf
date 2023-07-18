@@ -229,17 +229,17 @@ class StageEditorState extends MusicBeatState{
 		xPosTxt = new FlxText(3, yPosTxt.y - 24, camMenu.width, "", 20);
 		charTxt = new FlxText(3, xPosTxt.y - 24, camMenu.width, "", 20);
 
-		xPosTxt.setFormat(Paths.font("calibri.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		xPosTxt.setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		xPosTxt.scrollFactor.set();
 		xPosTxt.borderSize = 1.25;
 		xPosTxt.cameras = [camMenu];
 
-		yPosTxt.setFormat(Paths.font("calibri.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		yPosTxt.setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		yPosTxt.scrollFactor.set();
 		yPosTxt.borderSize = 1.25;
 		yPosTxt.cameras = [camMenu];
 
-		charTxt.setFormat(Paths.font("calibri.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		charTxt.setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		charTxt.scrollFactor.set();
 		charTxt.borderSize = 1.25;
 		charTxt.cameras = [camMenu];

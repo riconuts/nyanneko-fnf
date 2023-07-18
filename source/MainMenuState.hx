@@ -1,5 +1,6 @@
 package;
 
+import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.input.FlxPointer;
 import flixel.util.FlxTimer;
@@ -19,24 +20,206 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flash.ui.Mouse;
 import flash.ui.MouseCursor;
 using StringTools;
-class ZSprite extends FlxSprite
-{
-    public var order:Float = 0;
+
+typedef MenuOptionData = {
+	text:String,
+	onSelect:Void->Void
 }
 
-class MainMenuState extends MusicBeatState {
+class MainMenuState extends MusicBeatState
+{
+	//// Useless!!!
 	public static var engineVersion:String = '0.2.0'; // Used for autoupdating n stuff
 	public static var betaVersion(get, default):String = 'beta.6'; // beta version, make blank if not on a beta version, otherwise do it based on semantic versioning (alpha.1, beta.1, rc.1, etc)
 	public static var beta:Bool = betaVersion.trim() != '';
 	@:isVar
 	public static var displayedVersion(get, null):String = '';
-	static function get_displayedVersion(){
+	static function get_displayedVersion()
 		return 'v${engineVersion}${(beta?("-" + betaVersion):"")}';
-	}
+	
 	static function get_betaVersion()
-	{
 		return beta ? betaVersion : "0";
+
+	//// Real
+	final optionNames = [
+		"play",
+		"donate",
+		"credits",
+		"options"
+	];
+	final optionData:Map<String, MenuOptionData>;
+
+	var artMap = new Map<String, FlxSprite>();
+	var textArray = new Array<FlxText>();
+
+	var artGroup:FlxSpriteGroup;
+	var textGroup:FlxSpriteGroup;
+
+	var selectionArrow:FlxText;
+	static var curSelected:Int = 0; 
+
+	public function new(){
+		super();
+		optionData = [ // uhhhhhhhhhhh
+			"play" => {
+				text: "play ^o^", 
+				onSelect: ()->{
+					fadeTexts(()->{
+						LoadingState.loadAndSwitchState(new PlayState());
+					});
+				}
+			},
+			"donate" => {
+				text: "watch seeries", 
+				onSelect: ()->{
+					var snd = FlxG.sound.play(Paths.sound('confirmMenu'));
+					FlxFlicker.flicker(textArray[curSelected], snd.length / 1000, 0.06, true, true, (_)->{
+						CoolUtil.browserLoad('https://youtube.com/playlist?list=PLEA4FA04230851E59');
+					});
+				}
+			},
+			"credits" => {
+				text: "credit s", 
+				onSelect: ()->{
+					fadeTexts(()->{
+						MusicBeatState.switchState(new CreditsState());
+					});
+				}
+			},
+			"options" => {
+				text: "option", 
+				onSelect: ()->{
+					fadeTexts(()->{
+						MusicBeatState.switchState(new newoptions.OptionsState());
+					});
+				}
+			}
+		];
 	}
+
+	override public function create()
+	{
+		////
+		FlxG.camera.bgColor = 0xFFFFCC00;
+
+		// dynamism haha i love that song
+		var artWidth = Math.ceil(FlxG.width * (680/1280));
+		var textWidth = Math.ceil(FlxG.width * (600/1280));
+		
+		var artGroup = new FlxSpriteGroup();
+		add(artGroup);
+
+		var textGroup = new FlxSpriteGroup(artWidth);
+		add(textGroup);
+
+		var textBg = new FlxSprite().makeGraphic(textWidth, FlxG.height, 0xFF333333);
+		textGroup.add(textBg);
+
+		for (idx in 0...optionNames.length)
+		{
+			var name = optionNames[idx];
+			var test = new FlxText(
+				0, 
+				128 + 140 * idx, 
+				textBg.width, 
+				optionData.get(name).text, 
+				48
+			);
+			test.font = Paths.font("segoepr.ttf");
+			test.alignment = CENTER;
+			test.ID = idx;
+
+			textArray.push(test);
+			textGroup.add(test);
+
+
+			var art = new FlxSprite();
+			art.frames = Paths.getSparrowAtlas('menushit/ART_${name}');
+			art.animation.addByPrefix("idle", "idle", 24, true);
+			art.animation.play("idle", true);
+			
+			art.exists = false;
+			art.alpha = 0;
+
+			artMap.set(name, art);
+			artGroup.add(art);
+		}
+
+		selectionArrow = new FlxText(380, 0, ">", 48);
+		selectionArrow.font = Paths.font("segoepr.ttf");
+		selectionArrow.color = 0xFFFF9900;
+		add(selectionArrow);
+
+		changeSelected(curSelected, true);
+
+		super.create();
+	}
+
+	function changeSelected(val:Int, ?isAbs:Bool) {
+		var oldSelected = curSelected;
+
+		if (isAbs)
+			curSelected = FlxMath.wrap(val, 0, optionNames.length-1);
+		else
+			curSelected = FlxMath.wrap(curSelected + val, 0, optionNames.length-1);
+
+		if (oldSelected != curSelected){
+			FlxG.sound.play(Paths.sound("scrollMenu"));
+		}
+		
+		var curTxt = textArray[curSelected];
+		if (curTxt == null)
+			selectionArrow.exists = false;
+		else{
+			selectionArrow.exists = true;
+			selectionArrow.setPosition(
+				curTxt.x + 10,
+				curTxt.y
+			);
+		}
+	}
+
+	function onAccept() {
+		var data = optionData.get(optionNames[curSelected]);
+		data.onSelect();
+	}
+
+	function fadeTexts(?onComplete){
+		FlxG.sound.play(Paths.sound("confirmMenu"));
+		inputsEnabled = false;
+
+		for (idx in 0...textArray.length){
+			var text = textArray[idx];
+
+			if (idx == curSelected)
+				FlxFlicker.flicker(text, 1, 0.06, false, true, (_)->{onComplete();});				
+			else
+				FlxTween.tween(text, {alpha: 0}, 0.4, {ease: FlxEase.quadOut, onComplete: (_)->{text.exists = false;}});
+		}
+	}
+
+
+	var inputsEnabled = true;
+	override function update(elapsed:Float) {
+		if (inputsEnabled){
+			if (controls.UI_UP_P)
+				changeSelected(-1);
+			if (controls.UI_DOWN_P)
+				changeSelected(1);
+			if (controls.ACCEPT)
+				onAccept();
+		}
+
+		super.update(elapsed);
+	}
+}
+
+class ZSprite extends FlxSprite
+{
+    public var order:Float = 0;
+}
+
+class MainMenuStateOLD extends MusicBeatState {
 	final optionShit:Array<String> = [
 		'story_mode',
  		'freeplay',
@@ -157,8 +340,8 @@ class MainMenuState extends MusicBeatState {
 		}
 		add(sideItems);
 
-		engineWatermark = new FlxText(0, 0, 0, 'Troll Engine $displayedVersion');
-		engineWatermark.setFormat(Paths.font("calibrib.ttf"), 16, Main.outOfDate?FlxColor.RED:FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		engineWatermark = new FlxText(0, 0, 0);//, 'Troll Engine $displayedVersion');
+		engineWatermark.setFormat(Paths.font("segoeprb.ttf"), 16, Main.outOfDate?FlxColor.RED:FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		engineWatermark.x = FlxG.width - engineWatermark.width;
 		engineWatermark.y = FlxG.height - engineWatermark.height;
 		add(engineWatermark);

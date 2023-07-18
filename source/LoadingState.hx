@@ -1,5 +1,7 @@
 package;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -24,23 +26,24 @@ class LoadingState extends MusicBeatState
 
 	override function create()
 	{
-		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
-		add(bg);
-		
-		funkay = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/funkay.png', IMAGE));
-		funkay.antialiasing = ClientPrefs.globalAntialiasing;
-		funkay.setGraphicSize(0, FlxG.height);
-		funkay.updateHitbox();
-		funkay.scrollFactor.set();
-		funkay.screenCenter();
+		funkay = new FlxSprite();
+		funkay.frames = Paths.getSparrowAtlas("funkay");
+		funkay.animation.addByPrefix("idle", "raku", 24, true);
+		funkay.animation.play("idle");
+		funkay.alpha = 0;
 		add(funkay);
 
+		FlxTween.tween(funkay, {alpha: 1}, 0.6, {ease: FlxEase.circOut, onComplete: (_)->{onLoad();}});
+
+		/* Doesn't actually load anything >< sorry
 		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
 		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
 		loadBar.screenCenter(X);
 		add(loadBar);
+		*/
 	}
 
+	/*
 	override function update(elapsed:Float)
 	{
 		funkay.setGraphicSize(Std.int(0.88 * FlxG.width + 0.9 * (funkay.width - 0.88 * FlxG.width)));
@@ -54,15 +57,13 @@ class LoadingState extends MusicBeatState
 
 		super.update(elapsed);
 	}
+	*/
 	
 	function onLoad()
 	{
-		var fadeTime = 0.5;
-		
-		FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
+		FlxTween.tween(funkay, {alpha: 0}, 0.6, {ease: FlxEase.circOut});
 
-		new FlxTimer().start(fadeTime + MIN_TIME, function(_){
-			if (stopMusic)
+		if (stopMusic)
 			{
 				if (FlxG.sound.music != null)
 					FlxG.sound.music.stop();
@@ -75,7 +76,6 @@ class LoadingState extends MusicBeatState
 				}
 			}
 			MusicBeatState.switchState(target);
-		});
 	}
 
 	override function destroy()
@@ -92,9 +92,7 @@ class LoadingState extends MusicBeatState
 	static function getNextState(target:FlxState, stopMusic = false):FlxState
 	{
 		/*
-		var loaded:Bool = false;
-		
-		if (!loaded)
+		if (target is PlayState)
 			return new LoadingState(target, stopMusic);
 		*/
 

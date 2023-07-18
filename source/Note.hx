@@ -438,11 +438,8 @@ class Note extends NoteObject
 		var lastScaleY:Float = scale.y;
 
 		var skin:String = texture;
-		if(texture.length < 1){
+		if (texture.length < 1)
 			skin = PlayState.arrowSkin;
-			if(skin == null || skin.length < 1)
-				skin = 'NOTE_assets';
-		}
 
 		var arraySkin:Array<String> = skin.split('/');
 		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length-1] + suffix; // add prefix and suffix to the texture file
@@ -570,9 +567,14 @@ class Note extends NoteObject
 			animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
 			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end');
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece');
-		}
 
-		setGraphicSize(Std.int(width * 0.7));
+			scale.set(34/15, 34/15);
+		}
+		else if (noteData > 0 && noteData < 3)
+			setGraphicSize(134, 112);
+		else
+			setGraphicSize(112, 134);	
+
 		updateHitbox();
 	}
 

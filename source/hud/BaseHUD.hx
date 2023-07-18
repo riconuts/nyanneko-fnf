@@ -110,7 +110,7 @@ class BaseHUD extends FlxSpriteGroup {
 
 		// prob gonna do my own time bar too lol but for now idc
 		timeTxt = new FlxText(FlxG.width * 0.5 - 200, 0, 400, "", 32);
-		timeTxt.setFormat(Paths.font("calibri.ttf"), 32, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
+		timeTxt.setFormat(Paths.font("segoepr.ttf"), 32, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
 		timeTxt.scrollFactor.set();
 		timeTxt.borderSize = 2;
 
@@ -209,10 +209,10 @@ class BaseHUD extends FlxSpriteGroup {
 	}
 
 	public function changedOptions(changed:Array<String>){
-		healthBar.healthBarBG.y = FlxG.height * (ClientPrefs.downScroll ? 0.11 : 0.89);
-		healthBar.y = healthBarBG.y + 5;
-		healthBar.iconP1.y = healthBar.y - 75;
-		healthBar.iconP2.y = healthBar.y - 75;
+		healthBar.alpha = ClientPrefs.hpOpacity;
+		healthBar.y = FlxG.height * (ClientPrefs.downScroll ? 0.11 : 0.89);
+		healthBar.iconScale = 1;
+		healthBar.update(0);
 
 		updateTimeBarType();
 	}

@@ -1,9 +1,8 @@
 package;
 
-import hud.AdvancedHUD;
-import lime.media.openal.ALFilter;
-import lime.media.openal.ALEffect;
-import lime.media.openal.AL;
+import openfl.geom.ColorTransform;
+import openfl.geom.Point;
+import lime.math.Rectangle;
 import flixel.util.FlxSpriteUtil.LineStyle;
 import openfl.display.BitmapData;
 import FreeplayState.FreeplayCategory;
@@ -149,9 +148,6 @@ class Wife3
 
 class PlayState extends MusicBeatState
 {
-	var sndFilter:ALFilter = AL.createFilter();
-    var sndEffect:ALEffect = AL.createEffect();
-
 	public var showDebugTraces:Bool = #if debug true #else Main.showDebugTraces #end;
 
 	var speedChanges:Array<SpeedEvent> = [];
@@ -250,14 +246,15 @@ class PlayState extends MusicBeatState
 	public var comboNumGroup = new FlxTypedGroup<RatingSprite>();
 	public var timingTxt:FlxText;
 
-	public var displayedHealth(default, set):Float = 1;
+	public var displayedHealth(default, set):Float;
 	function set_displayedHealth(value:Float){
-		healthBar.value = value;
+		trace("upadte");
 		displayedHealth = value;
+		healthBar.value = displayedHealth;
 
 		return value;
 	}
-	public var health(default, set):Float = 1;
+	public var health(default, set):Float;
 	public var maxHealth:Float = 2;
 	function set_health(value:Float){
 		health = value > maxHealth ? maxHealth : value;
@@ -347,7 +344,6 @@ class PlayState extends MusicBeatState
 	public var instaRespawn:Bool = false;
 
 	public var healthBar:FNFHealthBar;
-	public var healthBarBG:FlxSprite;
 
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
@@ -566,7 +562,7 @@ class PlayState extends MusicBeatState
 
 		////
 		if (SONG == null)
-			SONG = Song.loadFromJson('tutorial', 'tutorial');
+			SONG = Song.loadFromJson('sugoi', 'sugoi');
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
@@ -811,7 +807,6 @@ class PlayState extends MusicBeatState
 		
 		if (hud == null){
 			switch(ClientPrefs.etternaHUD){
-				case 'Advanced': hud = new AdvancedHUD(boyfriend.healthIcon, dad.healthIcon, SONG.song, stats);
 				default: hud = new PsychHUD(boyfriend.healthIcon, dad.healthIcon, SONG.song, stats);
 			}
 		}
@@ -819,12 +814,11 @@ class PlayState extends MusicBeatState
 		// TODO: remove all dependencies on healthbar in here
 		// aka make the HUD handle all of this (so that you can make custom HP bars, etc)
 		healthBar = hud.healthBar;
-		healthBarBG = healthBar.healthBarBG;
 		iconP1 = healthBar.iconP1;
 		iconP2 = healthBar.iconP2;
 
 		botplayTxt = new BotplayText(0, (ClientPrefs.downScroll ? FlxG.height - 44 : 19) + 15 + (ClientPrefs.downScroll ? -78 : 55), FlxG.width, "[BUTTPLUG]", 32);
-		botplayTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		botplayTxt.setFormat(Paths.font("segoepr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 1.25;
 		botplayTxt.exists = false;
@@ -894,7 +888,7 @@ class PlayState extends MusicBeatState
 			comboNumGroup.add(RatingSprite.newNumber()).kill();
 		
 		timingTxt = new FlxText();
-		timingTxt.setFormat(Paths.font("calibri.ttf"), 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		timingTxt.setFormat(Paths.font("segoepr.ttf"), 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		timingTxt.cameras = [camHUD];
 		timingTxt.scrollFactor.set();
 		timingTxt.borderSize = 1.25;
@@ -903,8 +897,8 @@ class PlayState extends MusicBeatState
 		timingTxt.alpha = 0;
 
 		// init shit
-		health = 1;
 		reloadHealthBarColors();
+		health = 1;
 
 		startingSong = true;
 
@@ -1161,11 +1155,8 @@ class PlayState extends MusicBeatState
 			return;
 
 		if (healthBar != null){
-			healthBar.createFilledBar(
-				FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
-				FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2])
-			);
-			healthBar.updateBar();
+			healthBar.emptyColor = FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]);
+			healthBar.fillColor = FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]);
 		}	
 	}
 
@@ -1463,7 +1454,6 @@ class PlayState extends MusicBeatState
 			if(sound != null){
 				var snd = FlxG.sound.play(Paths.sound(sound), 0.6);
 				snd.endTime = snd.length;
-				snd.effect = ClientPrefs.ruin ? sndEffect : null;
 				snd.onComplete = ()->{ snd.volume = 0; }
 			}
 			
@@ -1741,26 +1731,8 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		AL.filteri(sndFilter, AL.FILTER_TYPE, AL.FILTER_NULL);
- 		if(ClientPrefs.ruin){
-			AL.effecti(sndEffect, AL.EFFECT_TYPE, AL.EFFECT_REVERB);
-			AL.effectf(sndEffect, AL.REVERB_DECAY_TIME, 5);
-			AL.effectf(sndEffect, AL.REVERB_GAIN, 0.75);
-			AL.effectf(sndEffect, AL.REVERB_DIFFUSION, 0.5);
-		}else
-			AL.effecti(sndEffect, AL.EFFECT_TYPE, AL.EFFECT_NULL);
-		
-
-		for (track in tracks){
-			track.effect = ClientPrefs.ruin?sndEffect:null;
-			track.filter = null;
+		for (track in tracks)
 			track.pitch = playbackRate;
-		}
-
-		inst.filter = null;
-		vocals.filter = null;
-		inst.effect = ClientPrefs.ruin?sndEffect:null;
-		vocals.effect = ClientPrefs.ruin?sndEffect:null;
 		
 		inst.pitch = playbackRate;
 		vocals.pitch = playbackRate;
@@ -2580,7 +2552,7 @@ class PlayState extends MusicBeatState
 
 		callOnScripts('onUpdate', [elapsed]);
 
-		if (inst.playing && !inCutscene && health > healthDrain)
+		if (inst.playing && !inCutscene && healthDrain > 0 && health > healthDrain)
 		{
 			health -= healthDrain * (elapsed / (1/60));
 		}
@@ -3394,7 +3366,7 @@ class PlayState extends MusicBeatState
 					cancelMusicFadeTween();
 
 					function gotoMenus(){
-						MusicBeatState.switchState(new StoryMenuState());
+						MusicBeatState.switchState(new MainMenuState());
 						MusicBeatState.playMenuMusic(1, true);
 					}
 
@@ -3448,7 +3420,7 @@ class PlayState extends MusicBeatState
 				if(FlxTransitionableState.skipNextTransIn)
 					CustomFadeTransition.nextCamera = null;
 				
-				MusicBeatState.switchState(new FreeplayState());
+				MusicBeatState.switchState(new MainMenuState());
 				MusicBeatState.playMenuMusic(1, true);
 			}
 		}
@@ -4844,7 +4816,9 @@ class PlayState extends MusicBeatState
 
 	override public function switchTo(nextState: Dynamic){
 		callOnHScripts("switchingState", [nextState]);
+		#if LUA_ALLOWED
 		callOnLuas("switchingState");
+		#end
 
 		FlxG.timeScale = 1;
 		pressedGameplayKeys = [];
@@ -4855,7 +4829,7 @@ class PlayState extends MusicBeatState
 }
 
 // mental gymnastics
-class FNFHealthBar extends FlxBar{
+class FNFHealthBar extends flixel.group.FlxSpriteGroup{
 	public var healthBarBG:FlxSprite;
 
 	public var iconP1:HealthIcon;
@@ -4866,7 +4840,6 @@ class FNFHealthBar extends FlxBar{
 
 	public var iconOffset:Int = 26;
 
-	// public var value:Float = 1;
 	public var isOpponentMode:Bool = false; // going insane
 
 	override function set_flipX(value:Bool){
@@ -4882,9 +4855,12 @@ class FNFHealthBar extends FlxBar{
 			rightIcon = iconP1;
 		}
 
-		updateHealthBarPos();
+		super.set_flipX(value);
 
-		return super.set_flipX(value);
+		updateHealthBarPos();
+		updateIconPos();
+
+		return flipX; 
 	}
 
 	override function set_visible(value:Bool){
@@ -4903,16 +4879,55 @@ class FNFHealthBar extends FlxBar{
 		return super.set_alpha(value);
 	}
 
+	public var value(default, set):Float = 1;
+	public var max:Float = 2;
+	function set_value(val:Float){
+		value = val;
+		trace(value);
+
+		updateHealthBarPos();
+		updateIconPos();
+
+		return value;
+	}
+
+	public var direction:FlxBarFillDirection = RIGHT_TO_LEFT;
+	public var emptyColor:FlxColor = 0xFFFF0000;
+	public var fillColor:FlxColor = 0xFF00FF00;
+
+	public var fillX:Int = 5;
+	public var fillY:Int = 1;
+	public var fillW:Int = 592;
+	public var fillH:Int = 17;
+	public var leftSide:FlxSprite;
+	public var rightSide:FlxSprite;
+
 	public function new(bfHealthIcon = "face", dadHealthIcon = "face")
 	{
+		super();
+
 		//
-		healthBarBG = new FlxSprite(0, FlxG.height * (ClientPrefs.downScroll ? 0.11 : 0.89));
-		//healthBarBG.loadGraphic(Paths.image('healthBar'));
-		healthBarBG.makeGraphic(600, 18);
-		healthBarBG.color = 0xFF000000;
+		var graphic = Paths.image('healthBar');
+		if (graphic == null)
+			graphic = CoolUtil.makeOutlinedGraphic(600, 18, 0xFFFFFFFF, 5, 0xFF000000);
+
+		healthBarBG = new FlxSprite(0, FlxG.height * (ClientPrefs.downScroll ? 0.11 : 0.89), graphic);
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
 		healthBarBG.antialiasing = false;
+		add(healthBarBG);
+
+		setPosition(healthBarBG.x, healthBarBG.y);
+		healthBarBG.setPosition(x, y);
+
+		leftSide = new FlxSprite().makeGraphic(1, 1, 0xFFFFFFFF);
+		leftSide.antialiasing = false;
+		leftSide.blend = MULTIPLY;
+		add(leftSide);
+		rightSide = new FlxSprite().makeGraphic(1, 1, 0xFFFFFFFF);
+		rightSide.antialiasing = false;
+		rightSide.blend = MULTIPLY;
+		add(rightSide);
 
 		//
 		iconP1 = new HealthIcon(bfHealthIcon, true);
@@ -4920,18 +4935,14 @@ class FNFHealthBar extends FlxBar{
 		leftIcon = iconP2;
 		rightIcon = iconP1;
 
+		add(iconP1);
+		add(iconP2);
+
 		//
 		isOpponentMode = PlayState.instance.playOpponent;
-
-		super(
-			healthBarBG.x + 5, healthBarBG.y + 5,
-			RIGHT_TO_LEFT,
-			Std.int(healthBarBG.width - 10), Std.int(healthBarBG.height - 10),
-			null, null,
-			0, 2
-		);
-		
 		value = 1;
+
+		updateHealthBarPos();
 
 		//
 		iconP2.setPosition(
@@ -4966,49 +4977,96 @@ class FNFHealthBar extends FlxBar{
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
 
-		return iconScale = value;
+		iconScale = value;
+		updateIconPos();
+
+		return iconScale;
+	}
+
+	function updateIconPos(){
+		var scaleOff = 75 * iconScale;
+		leftIcon.x = healthBarPos - scaleOff - iconOffset * 2;
+		rightIcon.x = healthBarPos + scaleOff - 75 - iconOffset;
 	}
 
 	private var healthBarPos:Float;
 	private function updateHealthBarPos()
 	{
-		healthBarPos = x + width * (flipX ? value * 0.5 : 1 - value * 0.5) ;
-	}
+		var relValue = value/max;
+		if (!flipX) relValue = 1-relValue;
 
-	override function set_value(val:Float){
-		var val = isOpponentMode ? max-val : val;
+		trace(value, relValue);
 
-		iconP1.animation.curAnim.curFrame = val < 0.4 ? 1 : 0; // 20% ?
-		iconP2.animation.curAnim.curFrame = val > 1.6 ? 1 : 0; // 80% ?
+		healthBarPos = x + fillW * relValue;
 
-		super.set_value(val);
+		iconP1.animation.curAnim.curFrame = relValue < 0.2 ? 1 : 0; // 20% ?
+		iconP2.animation.curAnim.curFrame = relValue > 0.8 ? 1 : 0; // 80% ?
 
-		updateHealthBarPos();
+		var leftColor = emptyColor;
+		var	rightColor = fillColor;	
+		if (flipX){
+			leftColor = fillColor;
+			rightColor = emptyColor;
+		}
+		
+		var leftW:Int = Math.floor(fillW * relValue);
+		var rightW:Int = fillW - leftW;
 
-		return value;
+		leftSide.color = leftColor;
+		leftSide.setPosition(healthBarBG.x + fillX, healthBarBG.y + fillY);
+		if (leftW > 0){
+			leftSide.setGraphicSize(leftW, fillH);
+			leftSide.updateHitbox();
+			leftSide.visible = true;
+		}else{
+			leftSide.visible = false;
+		}
+		
+		rightSide.color = rightColor;
+		rightSide.setPosition(leftSide.x + leftW, leftSide.y);
+		if (rightW > 0){
+			rightSide.setGraphicSize(rightW, fillH);
+			rightSide.updateHitbox();
+			rightSide.visible = true;
+		}else{
+			rightSide.visible = false;
+		}
+
+		/*
+		var rectangle = new openfl.geom.Rectangle(0, 0, healthBarBG.graphic.bitmap.width, healthBarBG.graphic.bitmap.height);
+		healthBarBG.graphic.bitmap.fillRect(rectangle, 0x00000000);
+		healthBarBG.graphic.bitmap.copyPixels(bitmapShit, rectangle, new Point(), null, null, true);
+
+		rectangle.width = healthBarPos;
+		healthBarBG.graphic.bitmap.colorTransform(
+			rectangle, 
+				new ColorTransform(
+				emptyColor.redFloat,
+				emptyColor.greenFloat,
+				emptyColor.blueFloat,
+				1
+			)
+		);
+
+		rectangle.x = healthBarPos;
+		rectangle.width = healthBarBG.graphic.bitmap.width - healthBarPos;
+		healthBarBG.graphic.bitmap.colorTransform(
+			rectangle, 
+				new ColorTransform(
+				fillColor.redFloat,
+				fillColor.greenFloat,
+				fillColor.blueFloat,
+				1
+			)
+		);
+		
+		*/
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (!visible){
-			super.update(elapsed);
-			return;
-		}
-
-		healthBarBG.setPosition(x - 5, y - 5);
-
-		if (iconScale != 1){
+		if (iconScale != 1)
 			iconScale = FlxMath.lerp(1, iconScale, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1));
-
-			var scaleOff = 75 * iconScale;
-			leftIcon.x = healthBarPos - scaleOff - iconOffset * 2;
-			rightIcon.x = healthBarPos + scaleOff - 75 - iconOffset;
-		}
-		else
-		{
-			leftIcon.x = healthBarPos - 75 - iconOffset * 2;
-			rightIcon.x = healthBarPos - iconOffset;
-		}
 
 		super.update(elapsed);
 	}

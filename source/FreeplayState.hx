@@ -80,7 +80,7 @@ class FreeplayState extends MusicBeatState
 
 	function setCategory(id, name){
 		var catTitle = new FlxText(0, 50, 0, name, 32, true);
-		catTitle.setFormat(Paths.font("calibrib.ttf"), 32, 0xFFF4CC34, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
+		catTitle.setFormat(Paths.font("segoeprb.ttf"), 32, 0xFFF4CC34, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
 		catTitle.underline = true;
 		catTitle.scrollFactor.set();
 		catTitle.screenCenter(X);
@@ -393,7 +393,7 @@ class FreeplayState extends MusicBeatState
 		add(hintBg);
 
 		hintText = new FlxText(FlxG.width, FlxG.height - 20, 0, "Press CTRL to open the Gameplay Modifiers menu | Press R to reset a song's score.", 18);
-		hintText.font = Paths.font("calibri.ttf");
+		hintText.font = Paths.font("segoepr.ttf");
 		hintText.antialiasing = false;
 		hintText.scrollFactor.set();
 		add(hintText);
@@ -471,10 +471,10 @@ class FreeplayState extends MusicBeatState
 		button.yellowBorder = new FlxShapeBox(button.x - 3, button.y - 3, 200, 200, {thickness: 6, color: 0xFFF4CC34}, FlxColor.TRANSPARENT);
 
 		button.nameText = new FlxText(button.x, button.y - 32, button.width, displayName == null ? songName : displayName, 24);
-		button.nameText.setFormat(Paths.font("calibri.ttf"), 18, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
+		button.nameText.setFormat(Paths.font("segoepr.ttf"), 18, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
 
 		button.scoreText = new FlxText(button.x, button.y + button.height + 12, button.width, "", 24);
-		button.scoreText.setFormat(Paths.font("calibri.ttf"), 18, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
+		button.scoreText.setFormat(Paths.font("segoepr.ttf"), 18, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE);
 
 		category.add(button.yellowBorder);
 		category.add(button.nameText);

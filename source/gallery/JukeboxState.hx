@@ -212,7 +212,7 @@ class JukeboxState extends MusicBeatState {
 		mute.x = forw.x + 120;
 
 		songName = new FlxText(0, 520, FlxG.width, "", 32, true);
-		songName.setFormat(Paths.font("calibrib.ttf"), 32, TGTMenuShit.YELLOW, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE, TGTMenuShit.YELLOW);
+		songName.setFormat(Paths.font("segoeprb.ttf"), 32, TGTMenuShit.YELLOW, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE, TGTMenuShit.YELLOW);
 		songName.scrollFactor.set(1, 1);
 		songName.screenCenter(X);
 

@@ -28,7 +28,7 @@ class DiscordClient
 	{
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "1009523643392475206",
+			clientID: "814588678700924999",
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -39,7 +39,6 @@ class DiscordClient
 		{
 			DiscordRpc.process();
 			sleep(2);
-			//trace("Discord Client Update");
 		}
 
 		DiscordRpc.shutdown();
@@ -59,47 +58,9 @@ class DiscordClient
 	{
 		trace('Disconnected! $_code : $_message');
 	}
-
-	////
-	static var allowedImageKeys:Array<String> = [
-		"app-logo",
-		"gorgeous",
-		"trollface",
-
-		"talentless-fox",
-		"no-villains",
-		"die-batsards",
-		"taste-for-blood",
-		
-		"high-shovel",
-		"on-your-trail",
-		"proving-nothing",
-
-		"no-heroes",
-		"scars-n-stars",
-		
-		"lonely-looser",
-		"hammerhead",
-		"all-hail-the-king",
-
-		"presentless-fox",
-		"no-grinches",
-		"die-carolers",
-	];
-	inline static function getImageKey(key):String
-		return allowedImageKeys.contains(key) ? key : "app-logo";
 	
-	public static function changePresence(details:String, state:Null<String>, largeImageKey:String = "app-logo", ?hasStartTimestamp:Bool, ?endTimestamp:Float)
+	public static function changePresence(details:String, state:Null<String>, ?largeImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)
 	{
-		/*
-		DiscordRpc.presence({
-			details: "thats how you do it",
-			largeImageKey: 'gorgeous',
-			largeImageText: 'gorgeous'
-		});
-		*/
-
-		////
 		var startTimestamp:Float = hasStartTimestamp ? Date.now().getTime() : 0;
 
 		if (endTimestamp > 0)
@@ -109,17 +70,14 @@ class DiscordClient
 			details: details,
 			state: state,
 
-			largeImageKey: getImageKey(largeImageKey),
-			largeImageText: "Tails Gets Trolled v" + lime.app.Application.current.meta.get('version'), //"Troll Engine"
-			// largeImageText: "Engine Version: " + MainMenuState.engineVersion,
+			largeImageKey: 'icon',
+			//largeImageText: "Troll Engine v" + lime.app.Application.current.meta.get('version'),
 
 			// Obtained times are in milliseconds so they are divided so Discord can use it
 			startTimestamp : Std.int(startTimestamp / 1000),
 			endTimestamp : Std.int(endTimestamp / 1000)
 		});
-		
-		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
-	}
+			}
 
 	#if LUA_ALLOWED
 	public static function addLuaCallbacks(lua:State)

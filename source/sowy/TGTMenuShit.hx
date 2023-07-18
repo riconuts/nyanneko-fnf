@@ -9,7 +9,7 @@ class TGTMenuShit
 
     public static function newBackTextButton(backFunction:Dynamic){
         var cornerLeftText = new TGTTextButton(20, FlxG.height, 0, "← BACK", 32, backFunction);
-		cornerLeftText.label.setFormat(Paths.font("calibri.ttf"), 32, YELLOW, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, YELLOW);
+		cornerLeftText.label.setFormat(Paths.font("segoepr.ttf"), 32, YELLOW, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, YELLOW);
 		cornerLeftText.label.underline = true;
 		cornerLeftText.y -= cornerLeftText.height + 15;
 

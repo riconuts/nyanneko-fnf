@@ -356,9 +356,10 @@ class Paths
 	{
 		#if MODS_ALLOWED
 		var file:String = modsFont(key);
-		if (FileSystem.exists(file))
+		if (exists(file))
 			return file;
 		#end
+		
 		return 'assets/fonts/$key';
 	}
 

@@ -31,7 +31,7 @@ class Main extends Sprite
 	public static var recentRelease:Release;
 	
 	public static var showDebugTraces:Bool = #if(SHOW_DEBUG_TRACES || debug) true #else false #end;
-	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
+	var gameWidth:Int = 1080; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var initialState:Class<FlxState> = StartupState; // The FlxState the game starts with.
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
@@ -133,10 +133,11 @@ class Main extends Sprite
 		#if sys
 		for (arg in Sys.args()){
 			switch(arg){
+				/*
 				case "troll":
 					troll = true;
 					break;
-				
+				*/
 				case "debug":
 					PlayState.chartingMode = true;
 					initialState = SongSelectState;
@@ -177,14 +178,16 @@ class Main extends Sprite
 			fpsVar = new FPS(10, 3, 0xFFFFFF);
 			fpsVar.visible = false;
 			addChild(fpsVar);
+
+			/*
+			bread = new Bread();
+			bread.visible = false;
+			addChild(bread);
+			*/
 			
 			Lib.current.stage.align = "tl";
 			Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 			#end
-
-			bread = new Bread();
-			bread.visible = false;
-			addChild(bread);
 		}
 		
 		#if CRASH_HANDLER

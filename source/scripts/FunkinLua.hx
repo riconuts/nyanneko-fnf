@@ -45,14 +45,15 @@ class FunkinLua extends FunkinScript
 	public var errorHandler:String->Void;
 	#if LUA_ALLOWED
 	public var lua:State = null;
+
+	public final addCallback:(String, Dynamic)->Bool;
+	public final removeCallback:String->Bool;	
 	#end
+
 	public var camTarget:FlxCamera;
 	var gonnaClose:Bool = false;
 
 	public var accessedProps:Map<String, Dynamic> = null;
-
-	public final addCallback:(String, Dynamic)->Bool;
-	public final removeCallback:String->Bool;
 
 	public function new(script:String, ?name:String, ?ignoreCreateCall:Bool=false) {
 		#if LUA_ALLOWED
@@ -2639,7 +2640,7 @@ class ModchartText extends FlxText
 	public function new(x:Float, y:Float, text:String, width:Float)
 	{
 		super(x, y, width, text, 16);
-		setFormat(Paths.font("calibri.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		setFormat(Paths.font("segoepr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		cameras = [PlayState.instance.camHUD];
 		scrollFactor.set();
 		borderSize = 2;
@@ -2653,7 +2654,7 @@ class DebugLuaText extends FlxText
 	public function new(text:String, parentGroup:FlxTypedGroup<DebugLuaText>) {
 		this.parentGroup = parentGroup;
 		super(10, 10, 0, text, 16);
-		setFormat(Paths.font("calibri.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scrollFactor.set();
 		borderSize = 1;
 	}

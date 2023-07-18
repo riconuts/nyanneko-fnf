@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.FlxGraphic;
 import flixel.*;
 import flixel.math.*;
 import flixel.system.FlxSound;
@@ -93,11 +94,18 @@ class CreditsState extends MusicBeatState
 		bg.screenCenter().scrollFactor.set();
 		add(bg);
 
-		var backdrops = new flixel.addons.display.FlxBackdrop(Paths.image('grid'));
-		backdrops.velocity.set(30, -30);
+
+		var gridGraphic = FlxGraphic.fromRectangle(2, 2, 0xFFE1D4B9, false, "creditsGrid");
+		gridGraphic.bitmap.setPixel32(0,0,0xFFB583FA);
+		gridGraphic.bitmap.setPixel32(1,1,0xFFB583FA);
+		gridGraphic.persist = false;
+
+		var backdrops = new flixel.addons.display.FlxBackdrop(gridGraphic);
+		backdrops.antialiasing = false;
+		backdrops.scale.set(32, 32);
+		backdrops.updateHitbox();
+		backdrops.velocity.set(32, -32);
 		backdrops.scrollFactor.set();
-		backdrops.blend = MULTIPLY;
-		backdrops.alpha = 0.25;
 		backdrops.x -= 10;
 		add(backdrops);
 
@@ -127,7 +135,7 @@ class CreditsState extends MusicBeatState
 		}
 
 		// Just in case we forget someone!!!
-		#if final
+		#if (final && false)
 		trace('checking for updated credits');
 		var http = new haxe.Http("https://raw.githubusercontent.com/riconuts/troll-engine/main/assets/data/credits.txt");
 		http.onData = function(data:String){
@@ -172,7 +180,7 @@ class CreditsState extends MusicBeatState
 		add(hintBg);
 
 		hintText = new FlxText(hintBg.x + 25, hintBg.y + hintBg.height * 0.5 - 16, hintBg.width - 50, "asfgh", 32);
-		hintText.setFormat(Paths.font("calibri.ttf"), 32, 0xFFFFFFFF, CENTER);
+		hintText.setFormat(Paths.font("segoepr.ttf"), 32, 0xFFFFFFFF, CENTER);
 		hintText.scrollFactor.set();
         add(hintText);
 		

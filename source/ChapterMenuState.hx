@@ -56,7 +56,7 @@ class ChapterMenuState extends MusicBeatState{
 		add(coverArt);
 
 		var chapterText = new FlxText(coverArt.x, coverArt.y + coverArt.height + 4, coverArt.width, chapData.name, 32);
-		chapterText.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE, FlxColor.WHITE);
+		chapterText.setFormat(Paths.font("segoepr.ttf"), 32, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE, FlxColor.WHITE);
 		add(chapterText);
 
 		//
@@ -64,7 +64,7 @@ class ChapterMenuState extends MusicBeatState{
 		add(cornerLeftText);
 
 		var cornerRightText = new TGTTextButton(1280, 720, 0, "PLAY →", 32, playWeek);
-		cornerRightText.label.setFormat(Paths.font("calibri.ttf"), 32, sowy.TGTMenuShit.YELLOW, FlxTextAlign.LEFT, FlxTextBorderStyle.NONE);
+		cornerRightText.label.setFormat(Paths.font("segoepr.ttf"), 32, sowy.TGTMenuShit.YELLOW, FlxTextAlign.LEFT, FlxTextBorderStyle.NONE);
 		cornerRightText.label.underline = true;
 		add(cornerRightText);
 
@@ -76,11 +76,11 @@ class ChapterMenuState extends MusicBeatState{
 		startY = coverArt.y + 48;
 
 		var songText = new FlxText(halfScreen, startY, 0, "SONGS", 32);
-		songText.setFormat(Paths.font("calibrib.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
+		songText.setFormat(Paths.font("segoeprb.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
 		add(songText);
 
 		var scoreText = new FlxText(1205, startY, 0, "HI-SCORE", 32);
-		scoreText.setFormat(Paths.font("calibrib.ttf"), 32, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
+		scoreText.setFormat(Paths.font("segoeprb.ttf"), 32, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
 		scoreText.x -= scoreText.width + 15;
 		add(scoreText);
 
@@ -93,22 +93,22 @@ class ChapterMenuState extends MusicBeatState{
 			var songName = chapData.songs[idx];
 
 			var newSongTxt = new FlxText(halfScreen, yPos, 0, songName, 32);
-			newSongTxt.setFormat(Paths.font("calibri.ttf"), 32, 0xFFF4CC34, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE);
+			newSongTxt.setFormat(Paths.font("segoepr.ttf"), 32, 0xFFF4CC34, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE);
 			add(newSongTxt);
 
 			var newScoreTxt = new FlxText(1205, yPos, 0, '' + Highscore.getScore(songName), 32);
-			newScoreTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
+			newScoreTxt.setFormat(Paths.font("segoepr.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
 			newScoreTxt.x -= newScoreTxt.width + 15;
 			add(newScoreTxt);
 		}
 
 		// CHAPTER - TOTAL CHAPTER SCORE
 		var totalSongTxt = new FlxText(halfScreen, startY + (songAmount + 2) * 48, 0, "CHAPTER", 32);
-		totalSongTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
+		totalSongTxt.setFormat(Paths.font("segoepr.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
 		add(totalSongTxt);
 
 		var totalScoreTxt = new FlxText(1205, totalSongTxt.y, 0, Std.string(Highscore.getWeekScore(ChapterData.curChapter.directory)), 32);
-		totalScoreTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
+		totalScoreTxt.setFormat(Paths.font("segoepr.ttf"), 32, FlxColor.WHITE, FlxTextAlign.RIGHT, FlxTextBorderStyle.NONE, FlxColor.WHITE);
 		totalScoreTxt.x -= totalScoreTxt.width + 15;
 		add(totalScoreTxt);
 

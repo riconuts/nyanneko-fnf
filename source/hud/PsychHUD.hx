@@ -26,16 +26,13 @@ class PsychHUD extends BaseHUD
 
 		stats.changedEvent.add(statChanged);
 
-		add(healthBarBG);
 		add(healthBar);
-		add(iconP1);
-		add(iconP2);
 		
 		songHighscore = Highscore.getScore(songName);
 		songWifeHighscore = Highscore.getNotesHit(songName);
 
 		scoreTxt = new FlxText(0, healthBarBG.y + 48, FlxG.width, "", 20);
-		scoreTxt.setFormat(Paths.font("calibri.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scoreTxt.setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.visible = scoreTxt.alpha > 0;
@@ -51,13 +48,13 @@ class PsychHUD extends BaseHUD
 				var judgment = displayedJudges[idx];
 
 				var text = new FlxText(textPosX, textPosY + idx*25, textWidth, displayNames.get(judgment), 20);
-				text.setFormat(Paths.font("calibrib.ttf"), 24, judgeColours.get(judgment), LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				text.setFormat(Paths.font("segoeprb.ttf"), 24, judgeColours.get(judgment), LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				text.scrollFactor.set();
 				text.borderSize = 1.25;
 				add(text);
 
 				var numb = new FlxText(textPosX, text.y, textWidth, "0", 20);
-				numb.setFormat(Paths.font("calibri.ttf"), 24, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				numb.setFormat(Paths.font("segoepr.ttf"), 24, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				numb.scrollFactor.set();
 				numb.borderSize = 1.25;
 				add(numb);

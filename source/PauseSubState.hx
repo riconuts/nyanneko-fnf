@@ -353,8 +353,11 @@ class PauseSubState extends MusicBeatSubstate
 	public static function restartSong(noTrans:Bool = false)
 	{
 		PlayState.instance.paused = true; // For lua
-		FlxG.sound.music.volume = 0;
+
+		PlayState.instance.inst.volume = 0;
 		PlayState.instance.vocals.volume = 0;
+		for (track in PlayState.instance.tracks)	
+			track.volume = 0;
 
 		if(noTrans)
 		{
@@ -428,7 +431,7 @@ class PauseSubState extends MusicBeatSubstate
 			if(menuItems[i] == 'Skip Time')
 			{
 				skipTimeText = new FlxText(0, 0, 0, '', 64);
-				skipTimeText.setFormat(Paths.font("calibri.ttf"), 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				skipTimeText.setFormat(Paths.font("segoepr.ttf"), 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				skipTimeText.scrollFactor.set();
 				skipTimeText.borderSize = 2;
 				skipTimeTracker = item;

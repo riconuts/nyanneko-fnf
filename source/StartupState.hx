@@ -164,7 +164,7 @@ class StartupState extends FlxState
 
 	private var warning:FlxSprite;
 	private var step = 0;
-	private var nextState = TitleState;
+	private var nextState = MainMenuState;
 
 	override function update(elapsed)
 	{
@@ -183,7 +183,7 @@ class StartupState extends FlxState
 			case 1:
  				load();
 				if (Type.getClassFields(nextState).contains("load"))
-					nextState.load();
+					Reflect.callMethod(nextState, Reflect.field(nextState, "load"), []);
 				
 				#if (sys && debug)
 				var waitTime = 1.5 - Sys.cpuTime();
@@ -202,7 +202,7 @@ class StartupState extends FlxState
 					{
 						FlxTransitionableState.skipNextTransIn = true;
 						FlxTransitionableState.skipNextTransOut = true;
-						MusicBeatState.switchState(new TitleState());
+						MusicBeatState.switchState(Type.createInstance(nextState, []));
 					}	
 				}});
 				step = 3; 

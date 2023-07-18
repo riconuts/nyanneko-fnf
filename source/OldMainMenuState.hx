@@ -162,13 +162,13 @@ class OldMainMenuState extends MusicBeatState
 
 		#if !final
 		var versionShit = new FlxText(12, FlxG.height - 44, 0, "Build Date: " + Sowy.getBuildDate(), 16);
-		versionShit.setFormat(Paths.font("calibri.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(Paths.font("segoepr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		versionShit.scrollFactor.set();
 		add(versionShit);
 		#end
 		
 		var versionShit = new FlxText(12, FlxG.height - 24, 0, "Tails Gets Trolled v" + Application.current.meta.get('version'), 16);
-		versionShit.setFormat(Paths.font("calibri.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(Paths.font("segoepr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		versionShit.scrollFactor.set();
 		add(versionShit);
 
