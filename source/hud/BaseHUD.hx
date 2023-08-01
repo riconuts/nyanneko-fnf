@@ -1,5 +1,6 @@
 package hud;
 
+import flixel.graphics.FlxGraphic;
 import flixel.tweens.*;
 import flixel.util.FlxStringUtil;
 import flixel.ui.FlxBar;
@@ -92,13 +93,13 @@ class BaseHUD extends FlxSpriteGroup {
 
 	function get_healthBarBG() return healthBar.healthBarBG;
 
-	public var timeBar:FlxBar;
+	public var timeBar:SowyBar;
 	public var timeTxt:FlxText;
-	private var timeBarBG:FlxSprite;
 
 	public function new(iP1:String, iP2:String, songName:String, stats:Stats)
 	{
 		super();
+
 		this.stats = stats;
 		this.songName = songName;
 		if (!ClientPrefs.useEpics)
@@ -108,30 +109,18 @@ class BaseHUD extends FlxSpriteGroup {
 		iconP1 = healthBar.iconP1;
 		iconP2 = healthBar.iconP2;
 
-		// prob gonna do my own time bar too lol but for now idc
-		timeTxt = new FlxText(FlxG.width * 0.5 - 200, 0, 400, "", 32);
-		timeTxt.setFormat(Paths.font("segoepr.ttf"), 32, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
-		timeTxt.scrollFactor.set();
-		timeTxt.borderSize = 2;
-
-		var bgGraphic = Paths.image('timeBar');
-		if (bgGraphic == null) bgGraphic = CoolUtil.makeOutlinedGraphic(400, 20, 0xFFFFFFFF, 5, 0xFF000000);
-
-		timeBarBG = new FlxSprite(timeTxt.x, 0, bgGraphic);
-		timeBarBG.color = FlxColor.BLACK;
-		timeBarBG.scrollFactor.set();
-
-		timeBar = new FlxBar(timeBarBG.x + 5, 0, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 10), Std.int(timeBarBG.height - 10), this,
-			'songPercent', 0, 1);
-		timeBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
-		timeBar.numDivisions = 800; // How much lag this causes?? Should i tone it down to idk, 400 or 200?
+		timeBar = new SowyBar(FlxG.width * 0.5 - 200, 0);
+		timeBar.max = 1;
 		timeBar.scrollFactor.set();
 
-		updateTimeBarType();
-
-		add(timeBarBG);
+		timeTxt = new FlxText(0, 0, 400, "", 32);
+		timeTxt.setFormat(Paths.font("vcr.ttf"), 32, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
+		timeTxt.borderSize = 2;
+		
 		add(timeBar);
-		add(timeTxt);
+		timeBar.add(timeTxt);
+
+		updateTimeBarType();
 	}
 
 	function updateTimeBarType()
@@ -140,8 +129,6 @@ class BaseHUD extends FlxSpriteGroup {
 
 		updateTime = (ClientPrefs.timeBarType != 'Disabled' && ClientPrefs.timeOpacity > 0);
 
-		timeTxt.exists = updateTime;
-		timeBarBG.exists = updateTime;
 		timeBar.exists = updateTime;
 
 		if (ClientPrefs.timeBarType == 'Song Name'){
@@ -154,9 +141,9 @@ class BaseHUD extends FlxSpriteGroup {
 			timeTxt.offset.y = 0;
 		}
 		
-		timeTxt.y = ClientPrefs.downScroll ? (FlxG.height - 44) : 19;
-		timeBarBG.y = timeTxt.y + (timeTxt.height * 0.25);
-		timeBar.y = timeBarBG.y + 5;
+		var y = ClientPrefs.downScroll ? (FlxG.height - 44) : 19;
+		timeBar.y = y + (timeTxt.height * 0.25);
+		timeTxt.y = y;
 
 		updateTimeBarAlpha();
 	}
@@ -164,9 +151,7 @@ class BaseHUD extends FlxSpriteGroup {
 	function updateTimeBarAlpha(){
 		var timeBarAlpha = ClientPrefs.timeOpacity * alpha * tweenProg;
 		
-		timeBarBG.alpha = timeBarAlpha;
 		timeBar.alpha = timeBarAlpha;
-		timeTxt.alpha = timeBarAlpha;
 	}
 
 	override public function update(elapsed:Float){
@@ -182,6 +167,8 @@ class BaseHUD extends FlxSpriteGroup {
 			songPercent = (curTime / songLength);
 			time = curTime;
 
+			timeBar.value = songPercent;
+
 			var timeCalc:Null<Float> = null;
 
 			switch (ClientPrefs.timeBarType){
@@ -194,10 +181,7 @@ class BaseHUD extends FlxSpriteGroup {
 			}
 
 			if (timeCalc != null){
-				if (timeCalc <= 0)
-					timeTxt.text = "0:00"
-				else
-					timeTxt.text = FlxStringUtil.formatTime(timeCalc / FlxG.timeScale / 1000, false);
+				timeTxt.text = (timeCalc <= 0) ? "0:00" : FlxStringUtil.formatTime(timeCalc / FlxG.timeScale / 1000, false);
 			}
 		}
 
@@ -236,9 +220,7 @@ class BaseHUD extends FlxSpriteGroup {
 
 	public function songEnding()
 	{
-		timeBarBG.exists = false;
 		timeBar.exists = false;
-		timeTxt.exists = false;
 	}
 
 	public function stepHit(step:Int){}
@@ -250,4 +232,116 @@ class BaseHUD extends FlxSpriteGroup {
 	function set_songName(value:String)return songName = value;
 	function set_songPercent(value:Float)return songPercent = value;
 	function set_combo(value:Int)return combo = value;
+}
+
+class SowyBar extends flixel.group.FlxSpriteGroup{
+	public var bg:FlxSprite;
+
+	override function set_flipX(value:Bool){
+		super.set_flipX(value);
+
+		updateBar();
+
+		return flipX; 
+	}
+
+	public var value(default, set):Float = 0;
+	public var max(default, set):Float = 1;
+	function set_value(val:Float){
+		value = val;
+
+		updateBar();
+
+		return value;
+	}
+	function set_max(val:Float){
+		value = Math.min(value, max);
+
+		updateBar();
+
+		return max;
+	}
+
+	public var direction:FlxBarFillDirection = RIGHT_TO_LEFT;
+	public var emptyColor:FlxColor = 0xFF000000;
+	public var fillColor:FlxColor = 0xFFFFFFFF;
+
+	public var fillX:Int = 3;
+	public var fillY:Int = 3;
+	public var fillW:Int = 394;
+	public var fillH:Int = 15;
+	public var leftSide:FlxSprite;
+	public var rightSide:FlxSprite;
+
+	public function new(x, y)
+	{
+		super(x, y);
+		antialiasing = false;
+		scrollFactor.set();
+
+		//
+		var graphic = Paths.image('timeBar');
+		if (graphic == null)
+			graphic = CoolUtil.makeOutlinedGraphic(400, 20, 0xFFFFFFFF, 5, 0xFF000000);
+
+		bg = new FlxSprite(0, 0, graphic);
+		add(bg);
+
+		var whitePixelGraphic = FlxGraphic.fromRectangle(1, 1, 0xFFFFFFFF, false, "whitePixel");
+		
+		leftSide = new FlxSprite(0, 0, whitePixelGraphic);
+		leftSide.blend = MULTIPLY;
+		add(leftSide);
+
+		rightSide = new FlxSprite(0, 0, whitePixelGraphic);
+		rightSide.blend = MULTIPLY;
+		add(rightSide);
+
+		value = 1;
+		updateBar();
+	}
+
+	private var limit_pos_x:Float;
+	private function updateBar()
+	{
+		var relValue = value/max;
+		var leftColor = fillColor;
+		var	rightColor = emptyColor;	
+
+		if (flipX){
+			relValue = 1-relValue;
+
+			leftColor = fillColor;
+			rightColor = emptyColor;
+		}
+
+		limit_pos_x = x + fillW * relValue;
+		
+		var leftW:Int = Math.floor(fillW * relValue);
+		var rightW:Int = fillW - leftW;
+
+		leftSide.alpha = leftColor.alphaFloat;
+		leftSide.color = leftColor.to24Bit();
+
+		leftSide.setPosition(bg.x + fillX, bg.y + fillY);
+		if (leftW > 0){
+			leftSide.setGraphicSize(leftW, fillH);
+			leftSide.updateHitbox();
+			leftSide.visible = true;
+		}else{
+			leftSide.visible = false;
+		}
+		
+		rightSide.alpha = rightColor.alphaFloat;
+		rightSide.color = rightColor.to24Bit();
+
+		rightSide.setPosition(leftSide.x + leftW, leftSide.y);
+		if (rightW > 0){
+			rightSide.setGraphicSize(rightW, fillH);
+			rightSide.updateHitbox();
+			rightSide.visible = true;
+		}else{
+			rightSide.visible = false;
+		}
+	}
 }

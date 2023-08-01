@@ -248,7 +248,7 @@ class PlayState extends MusicBeatState
 
 	public var displayedHealth(default, set):Float;
 	function set_displayedHealth(value:Float){
-		trace("upadte");
+		//trace("upadte");
 		displayedHealth = value;
 		healthBar.value = displayedHealth;
 
@@ -1715,13 +1715,17 @@ class PlayState extends MusicBeatState
 		Conductor.changeBPM(songData.bpm);
 
 		inst = new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song));
-		vocals = new FlxSound();
-
-		if (SONG.needsVoices)
-			vocals.loadEmbedded(Paths.voices(PlayState.SONG.song));
-
 		FlxG.sound.list.add(inst);
-		FlxG.sound.list.add(vocals);
+
+		vocals = new FlxSound();
+		if (SONG.needsVoices){
+			vocalsEnded = false;
+			vocals.loadEmbedded(Paths.voices(PlayState.SONG.song));
+		}else{
+			vocalsEnded = true;
+			vocals.exists = true; // so it doesn't get recycled and fuck up EVERYTHING
+		}
+		FlxG.sound.list.add(vocals);		
 
 		if (SONG.extraTracks != null){
 			for (trackName in SONG.extraTracks){
@@ -1731,22 +1735,16 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		inst.pitch = playbackRate;
+		vocals.pitch = playbackRate;
 		for (track in tracks)
 			track.pitch = playbackRate;
 		
-		inst.pitch = playbackRate;
-		vocals.pitch = playbackRate;
 
 		add(notes);
 
-		var noteData:Array<SwagSection>;
-
-		// NEW SHIT
-		noteData = songData.notes;
-
-		var playerCounter:Int = 0;
-		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
-
+		var noteData:Array<SwagSection> = songData.notes;
+		
 		// loads note types
 		for (section in noteData)
 		{
@@ -2003,7 +2001,6 @@ class PlayState extends MusicBeatState
 				}
 
 			}
-			daBeats += 1;
 		}
 
 		// playerCounter += 1;
@@ -2512,6 +2509,7 @@ class PlayState extends MusicBeatState
 
 		if(showDebugTraces)
 			trace("resync vocals!!");
+
 		vocals.pause();
 		for (track in tracks)
 			track.pause();
@@ -2519,11 +2517,15 @@ class PlayState extends MusicBeatState
 		inst.play();
 		Conductor.songPosition = inst.time;
 
-		vocals.time = vocalsEnded ? vocals.length : Conductor.songPosition;
-		vocals.play();
+		if (Conductor.songPosition < vocals.length){
+			vocals.time = Conductor.songPosition;
+			vocals.play();
+		}
 		for (track in tracks){
-			track.time = Conductor.songPosition;
-			track.play();
+			if (Conductor.songPosition < track.length){
+				track.time = Conductor.songPosition;
+				track.play();
+			}
 		}
 	}
 
@@ -2696,7 +2698,7 @@ class PlayState extends MusicBeatState
 				
 				Conductor.songPosition = inst.time + resyncTimer;
 				Conductor.lastSongPos = inst.time;
-				if (Math.abs(vocals.time - inst.time) > 25 && !vocalsEnded){
+				if (!vocalsEnded && Math.abs(vocals.time - inst.time) > 33){
 					resyncVocals();
 				}
 				
@@ -3253,6 +3255,15 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	public static function gotoMenus()
+	{
+		FlxTransitionableState.skipNextTransIn = false;
+		CustomFadeTransition.nextCamera = null;
+
+		MusicBeatState.switchState(new MainMenuState());
+		MusicBeatState.playMenuMusic(1, true);
+	}
+
 
 	public var transitioning = false;
 	public function endSong():Void
@@ -3365,11 +3376,6 @@ class PlayState extends MusicBeatState
 
 					cancelMusicFadeTween();
 
-					function gotoMenus(){
-						MusicBeatState.switchState(new MainMenuState());
-						MusicBeatState.playMenuMusic(1, true);
-					}
-
 					#if VIDEOS_ALLOWED
 					var videoPath:String = Paths.video('${Paths.formatToSongPath(SONG.song)}-end');
 					if (Paths.exists(videoPath))
@@ -3420,8 +3426,7 @@ class PlayState extends MusicBeatState
 				if(FlxTransitionableState.skipNextTransIn)
 					CustomFadeTransition.nextCamera = null;
 				
-				MusicBeatState.switchState(new MainMenuState());
-				MusicBeatState.playMenuMusic(1, true);
+				gotoMenus();
 			}
 		}
 	}
@@ -4883,7 +4888,7 @@ class FNFHealthBar extends flixel.group.FlxSpriteGroup{
 	public var max:Float = 2;
 	function set_value(val:Float){
 		value = val;
-		trace(value);
+		//trace(value);
 
 		updateHealthBarPos();
 		updateIconPos();
@@ -4995,7 +5000,7 @@ class FNFHealthBar extends flixel.group.FlxSpriteGroup{
 		var relValue = value/max;
 		if (!flipX) relValue = 1-relValue;
 
-		trace(value, relValue);
+		//trace(value, relValue);
 
 		healthBarPos = x + fillW * relValue;
 

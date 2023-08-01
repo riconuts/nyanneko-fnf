@@ -333,11 +333,7 @@ class PauseSubState extends MusicBeatSubstate
 
 						PlayState.deathCounter = 0;
 						PlayState.seenCutscene = false;
-						if(PlayState.isStoryMode) {
-							MusicBeatState.switchState(new StoryMenuState());
-						} else {
-							MusicBeatState.switchState(new FreeplayState());
-						}
+						PlayState.gotoMenus();
 						PlayState.instance.cancelMusicFadeTween();
 
 						MusicBeatState.playMenuMusic(true);

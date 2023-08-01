@@ -53,12 +53,11 @@ class HealthIcon extends FlxSprite
 			if (oldIcon != null){
 				changeIconGraphic(oldIcon);
 				isOldIcon = true;
-				return;
 			}
+		}else{
+			changeIcon(char);
+			isOldIcon = false;
 		}
-
-		changeIcon(char);
-		isOldIcon = false;
 	}
 
 	private var iconOffsets:Array<Float> = [0, 0];

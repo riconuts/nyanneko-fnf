@@ -210,18 +210,15 @@ class GameOverSubstate extends MusicBeatSubstate
 			if (genericBitch != null)
 				FlxTween.cancelTweensOf(genericBitch);
 
-			FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.stop();
+			
 			PlayState.deathCounter = 0;
 			PlayState.seenCutscene = false;
 
 			PlayState.instance.callOnScripts('onGameOverConfirm', [false]);
 
-			if (PlayState.isStoryMode)
-				MusicBeatState.switchState(new StoryMenuState());
-			else
-				MusicBeatState.switchState(new FreeplayState());
-
-			MusicBeatState.playMenuMusic(true);
+			PlayState.gotoMenus();
 		}
 
 		if (!isEnding && boyfriend != null && boyfriend.animation.curAnim.name == 'firstDeath')
