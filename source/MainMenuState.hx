@@ -60,10 +60,11 @@ class MainMenuState extends MusicBeatState
 
 	public function new(){
 		super();
-		optionData = [ // uhhhhhhhhhhh
+		optionData = [
 			"play" => {
 				text: "play ^o^", 
 				onSelect: ()->{
+					FlxTween.tween(titleGrp, {x: -760}, 0.6, {ease: FlxEase.expoOut});
 					fadeTexts(()->{
 						LoadingState.loadAndSwitchState(new PlayState());
 					});
@@ -97,17 +98,31 @@ class MainMenuState extends MusicBeatState
 		];
 	}
 
+	var titleGrp:FlxSpriteGroup;
+	var titleBg:FlxSprite;
+	var titleTxt:FlxText;
+
+	var artSpr:FlxSprite;
+
+	var artWidth = 680;
+	var textWidth = 600;
+
 	override public function create()
 	{
 		////
 		FlxG.camera.bgColor = 0xFFFFCC00;
 
 		// dynamism haha i love that song
-		var artWidth = Math.ceil(FlxG.width * (680/1280));
-		var textWidth = Math.ceil(FlxG.width * (600/1280));
+		artWidth = Math.ceil(FlxG.width * (680/1280));
+		textWidth = Math.ceil(FlxG.width * (600/1280));
 		
 		var artGroup = new FlxSpriteGroup();
 		add(artGroup);
+
+		artSpr = new FlxSprite();
+		artSpr.frames = Paths.getSparrowAtlas("menushit/art");
+		artSpr.exists = false;
+		artGroup.add(artSpr);
 
 		var textGroup = new FlxSpriteGroup(artWidth);
 		add(textGroup);
@@ -132,7 +147,9 @@ class MainMenuState extends MusicBeatState
 			textArray.push(test);
 			textGroup.add(test);
 
+			artSpr.animation.addByPrefix(name, name, 24, true);
 
+			/*
 			var art = new FlxSprite();
 			art.frames = Paths.getSparrowAtlas('menushit/ART_${name}');
 			art.animation.addByPrefix("idle", "idle", 24, true);
@@ -143,6 +160,7 @@ class MainMenuState extends MusicBeatState
 
 			artMap.set(name, art);
 			artGroup.add(art);
+			*/
 		}
 
 		selectionArrow = new FlxText(380, 0, ">", 48);
@@ -151,6 +169,26 @@ class MainMenuState extends MusicBeatState
 		add(selectionArrow);
 
 		changeSelected(curSelected, true);
+
+		////
+		titleGrp = new FlxSpriteGroup();
+		add(titleGrp);
+
+		titleBg = new FlxSprite(0, 0).makeGraphic(760, 100, 0xFF666666);
+		titleGrp.add(titleBg);
+
+		titleTxt = new FlxText(60, 0, 0, "nyan neko sugar girls ^o^", 48);
+		titleTxt.font = Paths.font("segoepr.ttf");
+		titleTxt.color = 0xFFCCCCCC;
+		titleTxt.y = Std.int(titleBg.y + (titleBg.height - titleTxt.height) / 2);
+		titleGrp.add(titleTxt);
+
+		//titleGrp.x = -760;
+		titleGrp.y = 24;
+
+
+		if (FlxG.sound.music == null)
+			MusicBeatState.playMenuMusic();
 
 		super.create();
 	}
@@ -177,6 +215,17 @@ class MainMenuState extends MusicBeatState
 				curTxt.y
 			);
 		}
+
+		var optionName = optionNames[curSelected];
+		artSpr.animation.play(optionName);
+		artSpr.updateHitbox();
+		artSpr.screenCenter(Y);
+		artSpr.x = switch(optionName){
+			case "play" | "credits": artWidth - artSpr.width;
+			case "donate": 0;
+			default: (artWidth - artSpr.width) / 2;
+		}
+		artSpr.exists = true;
 	}
 
 	function onAccept() {
@@ -195,6 +244,18 @@ class MainMenuState extends MusicBeatState
 				FlxFlicker.flicker(text, 1, 0.06, false, true, (_)->{onComplete();});				
 			else
 				FlxTween.tween(text, {alpha: 0}, 0.4, {ease: FlxEase.quadOut, onComplete: (_)->{text.exists = false;}});
+		}
+
+		if (optionNames[curSelected] != "options"){
+			artSpr.updateHitbox();
+			artSpr.origin.x = artWidth - artSpr.x;
+			FlxTween.tween(artSpr, {alpha: 0}, 0.6, {ease: FlxEase.expoOut, onUpdate: (twn)->{
+				artSpr.scale.x = 1-FlxEase.expoOut(twn.percent);
+			}});
+		}else{
+			FlxTween.tween(artSpr, {alpha: 0}, 0.6, {ease: FlxEase.expoOut, onUpdate: (twn)->{
+				artSpr.scale.y = 1-FlxEase.expoOut(twn.percent);
+			}});
 		}
 	}
 

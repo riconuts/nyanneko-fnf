@@ -31,7 +31,7 @@ class ComboOffsetSubstate extends MusicBeatSubstate{
             camHUD.bgColor = FlxColor.fromRGBFloat(0, 0, 0, 0);
 
         if (ratingName == null)
-            ratingName = ClientPrefs.useEpics ? "epic" : "sick";
+            ratingName = /* ClientPrefs.useEpics ? "epic" : */ "sick"; // NO EPICSSS
 
         if (ratingColor == null){
             ratingColor = switch(ratingName){

@@ -109,7 +109,7 @@ class NoteOffsetState extends MusicBeatState
 		add(stage.foreground);
 
 		// Combo stuff
-		rating = new FlxSprite().loadGraphic(Paths.image(ClientPrefs.useEpics ? 'epic' : 'sick'));
+		rating = new FlxSprite().loadGraphic(Paths.image(/*ClientPrefs.useEpics ? 'epic' : */'sick')); // NO EPICSSS
 		rating.cameras = [camHUD];
 		rating.setGraphicSize(Std.int(rating.width * 0.7));
 		rating.updateHitbox();
@@ -118,7 +118,7 @@ class NoteOffsetState extends MusicBeatState
 		comboNums = new FlxSpriteGroup();
 		comboNums.cameras = [camHUD];
 
-		var ratingColor = ClientPrefs.useEpics ? 0xFFba82e8 : 0xFF87EDF5;
+		var ratingColor = /*ClientPrefs.useEpics ? 0xFFba82e8 :*/ 0xFF87EDF5; // NO EPICSSS
 		var comboColor = ClientPrefs.coloredCombos ? ratingColor : 0xFFFFFFFF;
 		for (i in 0...3){
 			var numScore = new FlxSprite().loadGraphic(Paths.image('num' + FlxG.random.int(0, 9)));

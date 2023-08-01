@@ -19,7 +19,7 @@ class BaseHUD extends FlxSpriteGroup {
 	var stats:Stats;
 	// just some ref vars
 	static var fullDisplays:Map<String, String> = [
-		"epic" => "Killers",
+		//"epic" => "Killers", // NO EPICS
 		"sick" => "Awesomes",
 		"good" => "Cools",
 		"bad" => "Gays",
@@ -29,7 +29,7 @@ class BaseHUD extends FlxSpriteGroup {
 	];
 
 	static var shortenedDisplays:Map<String, String> = [
-		"epic" => "KL",
+		//"epic" => "KL", // NO EPICS
 		"sick" => "AW",
 		"good" => "CL",
 		"bad" => "GY",
@@ -50,7 +50,7 @@ class BaseHUD extends FlxSpriteGroup {
 		"cb" => 0xFF7F265A
 	];
 
-	public var displayedJudges:Array<String> = ["epic", "sick", "good", "bad", "shit", "miss"];
+	public var displayedJudges:Array<String> = ["sick", "good", "bad", "shit", "miss"]; 
 
 	// set by PlayState
 	public var time(default, set):Float = 0;
@@ -86,12 +86,8 @@ class BaseHUD extends FlxSpriteGroup {
 
 	// just some extra variables lol
 	public var healthBar:FNFHealthBar;
-	@:isVar
-	public var healthBarBG(get, null):FlxSprite;
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
-
-	function get_healthBarBG() return healthBar.healthBarBG;
 
 	public var timeBar:SowyBar;
 	public var timeTxt:FlxText;
@@ -102,14 +98,14 @@ class BaseHUD extends FlxSpriteGroup {
 
 		this.stats = stats;
 		this.songName = songName;
-		if (!ClientPrefs.useEpics)
+		// if (!ClientPrefs.useEpics) // NO EPICSSS
 			displayedJudges.remove("epic");
 
 		healthBar = new FNFHealthBar(iP1, iP2);
-		iconP1 = healthBar.iconP1;
-		iconP2 = healthBar.iconP2;
+		iconP1 = healthBar.leftIcon;
+		iconP2 = healthBar.rightIcon;
 
-		timeBar = new SowyBar(FlxG.width * 0.5 - 200, 0);
+		timeBar = new SowyBar(FlxG.width * 0.5 - 200, 0, "timeBar");
 		timeBar.max = 1;
 		timeBar.scrollFactor.set();
 
@@ -273,16 +269,19 @@ class SowyBar extends flixel.group.FlxSpriteGroup{
 	public var leftSide:FlxSprite;
 	public var rightSide:FlxSprite;
 
-	public function new(x, y)
+	public var defaultWidth = 400;
+	public var defaultHeight = 20;
+
+	public function new(x:Float = 0, y:Float = 0, ?texture:String)
 	{
 		super(x, y);
 		antialiasing = false;
 		scrollFactor.set();
 
 		//
-		var graphic = Paths.image('timeBar');
+		var graphic = texture == null ? null : Paths.image(texture);
 		if (graphic == null)
-			graphic = CoolUtil.makeOutlinedGraphic(400, 20, 0xFFFFFFFF, 5, 0xFF000000);
+			graphic = CoolUtil.makeOutlinedGraphic(defaultWidth, defaultHeight, 0xFFFFFFFF, 5, 0xFF000000);
 
 		bg = new FlxSprite(0, 0, graphic);
 		add(bg);
@@ -298,22 +297,18 @@ class SowyBar extends flixel.group.FlxSpriteGroup{
 		add(rightSide);
 
 		value = 1;
-		updateBar();
 	}
 
+	public var flipDirection:Bool = false;
+	
 	private var limit_pos_x:Float;
 	private function updateBar()
 	{
 		var relValue = value/max;
+		if (flipDirection) relValue = 1-relValue;
+
 		var leftColor = fillColor;
 		var	rightColor = emptyColor;	
-
-		if (flipX){
-			relValue = 1-relValue;
-
-			leftColor = fillColor;
-			rightColor = emptyColor;
-		}
 
 		limit_pos_x = x + fillW * relValue;
 		

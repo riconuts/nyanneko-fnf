@@ -100,7 +100,7 @@ class Highscore
 		var idArray:Array<String> = [];
 
 		isWife3 = ClientPrefs.wife3;
-		hasEpic = ClientPrefs.useEpics;
+		hasEpic = false; // NO EPICS ClientPrefs.useEpics;
 		judgeDiff = ClientPrefs.judgeDiff;
 
 		idArray.push(hasEpic ? 't' : 'f');

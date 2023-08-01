@@ -513,7 +513,9 @@ class PlayState extends MusicBeatState
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
 		disableModcharts = !ClientPrefs.modcharts; //ClientPrefs.getGameplaySetting('disableModcharts', false);
 		midScroll = ClientPrefs.midScroll;
+		#if ruin_allow
 		playbackRate *= (ClientPrefs.ruin ? 0.8 : 1);
+		#end
 		FlxG.timeScale = playbackRate;
 		
 		if(perfectMode){
@@ -814,8 +816,8 @@ class PlayState extends MusicBeatState
 		// TODO: remove all dependencies on healthbar in here
 		// aka make the HUD handle all of this (so that you can make custom HP bars, etc)
 		healthBar = hud.healthBar;
-		iconP1 = healthBar.iconP1;
-		iconP2 = healthBar.iconP2;
+		iconP1 = healthBar.leftIcon;
+		iconP2 = healthBar.rightIcon;
 
 		botplayTxt = new BotplayText(0, (ClientPrefs.downScroll ? FlxG.height - 44 : 19) + 15 + (ClientPrefs.downScroll ? -78 : 55), FlxG.width, "[BUTTPLUG]", 32);
 		botplayTxt.setFormat(Paths.font("segoepr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -1719,13 +1721,13 @@ class PlayState extends MusicBeatState
 
 		vocals = new FlxSound();
 		if (SONG.needsVoices){
-			vocalsEnded = false;
 			vocals.loadEmbedded(Paths.voices(PlayState.SONG.song));
 		}else{
 			vocalsEnded = true;
-			vocals.exists = true; // so it doesn't get recycled and fuck up EVERYTHING
 		}
 		FlxG.sound.list.add(vocals);		
+
+		vocals.exists = true; // so it doesn't get recycled and fuck up EVERYTHING
 
 		if (SONG.extraTracks != null){
 			for (trackName in SONG.extraTracks){
@@ -4834,127 +4836,50 @@ class PlayState extends MusicBeatState
 }
 
 // mental gymnastics
-class FNFHealthBar extends flixel.group.FlxSpriteGroup{
-	public var healthBarBG:FlxSprite;
-
-	public var iconP1:HealthIcon;
-	public var iconP2:HealthIcon;
-
-	var leftIcon:HealthIcon;
-	var rightIcon:HealthIcon;
+class FNFHealthBar extends SowyBar{
+	public var leftIcon:HealthIcon;
+	public var rightIcon:HealthIcon;
 
 	public var iconOffset:Int = 26;
+	
+	var doHealthBarUpdates = false;
+	public function new(leftIcon = "face", rightIcon = "face")
+	{
+		defaultWidth = 600;
+		defaultHeight = 20;
 
-	public var isOpponentMode:Bool = false; // going insane
+		super(0, 0, "healthBar");
 
-	override function set_flipX(value:Bool){
-		iconP1.flipX = value;
-		iconP2.flipX = value;
+		fillX = 5;
+		fillY = 1;
+		fillW = 592;
+		fillH = 17;
 
-		// aughhh
-		if (value){
-			leftIcon = iconP1;
-			rightIcon = iconP2;
-		}else{
-			leftIcon = iconP2;
-			rightIcon = iconP1;
+		//
+		this.screenCenter(X);
+		this.y = FlxG.height * (ClientPrefs.downScroll ? 0.11 : 0.89);
+
+		//
+		this.leftIcon = new HealthIcon(leftIcon, false);
+		this.rightIcon = new HealthIcon(rightIcon, true);
+
+		add(this.leftIcon);
+		add(this.rightIcon);
+
+		//
+		flipDirection = PlayState.instance.playOpponent;
+		@:bypassAccessor{	
+			max = 2;
 		}
 
-		super.set_flipX(value);
-
-		updateHealthBarPos();
-		updateIconPos();
-
-		return flipX; 
-	}
-
-	override function set_visible(value:Bool){
-		healthBarBG.visible = value;
-		iconP1.visible = value;
-		iconP2.visible = value;
-
-		return super.set_visible(value);
-	}
-
-	override function set_alpha(value:Float){
-		healthBarBG.alpha = value;
-		iconP1.alpha = value;
-		iconP2.alpha = value;
-
-		return super.set_alpha(value);
-	}
-
-	public var value(default, set):Float = 1;
-	public var max:Float = 2;
-	function set_value(val:Float){
-		value = val;
-		//trace(value);
-
-		updateHealthBarPos();
-		updateIconPos();
-
-		return value;
-	}
-
-	public var direction:FlxBarFillDirection = RIGHT_TO_LEFT;
-	public var emptyColor:FlxColor = 0xFFFF0000;
-	public var fillColor:FlxColor = 0xFF00FF00;
-
-	public var fillX:Int = 5;
-	public var fillY:Int = 1;
-	public var fillW:Int = 592;
-	public var fillH:Int = 17;
-	public var leftSide:FlxSprite;
-	public var rightSide:FlxSprite;
-
-	public function new(bfHealthIcon = "face", dadHealthIcon = "face")
-	{
-		super();
-
-		//
-		var graphic = Paths.image('healthBar');
-		if (graphic == null)
-			graphic = CoolUtil.makeOutlinedGraphic(600, 18, 0xFFFFFFFF, 5, 0xFF000000);
-
-		healthBarBG = new FlxSprite(0, FlxG.height * (ClientPrefs.downScroll ? 0.11 : 0.89), graphic);
-		healthBarBG.screenCenter(X);
-		healthBarBG.scrollFactor.set();
-		healthBarBG.antialiasing = false;
-		add(healthBarBG);
-
-		setPosition(healthBarBG.x, healthBarBG.y);
-		healthBarBG.setPosition(x, y);
-
-		leftSide = new FlxSprite().makeGraphic(1, 1, 0xFFFFFFFF);
-		leftSide.antialiasing = false;
-		leftSide.blend = MULTIPLY;
-		add(leftSide);
-		rightSide = new FlxSprite().makeGraphic(1, 1, 0xFFFFFFFF);
-		rightSide.antialiasing = false;
-		rightSide.blend = MULTIPLY;
-		add(rightSide);
-
-		//
-		iconP1 = new HealthIcon(bfHealthIcon, true);
-		iconP2 = new HealthIcon(dadHealthIcon, false);
-		leftIcon = iconP2;
-		rightIcon = iconP1;
-
-		add(iconP1);
-		add(iconP2);
-
-		//
-		isOpponentMode = PlayState.instance.playOpponent;
+		doHealthBarUpdates = true;
 		value = 1;
 
-		updateHealthBarPos();
-
-		//
-		iconP2.setPosition(
+		this.rightIcon.setPosition(
 			healthBarPos - 75 - iconOffset * 2,
 			y - 75
 		);
-		iconP1.setPosition(
+		this.leftIcon.setPosition(
 			healthBarPos - iconOffset,
 			y - 75
 		);
@@ -4976,11 +4901,11 @@ class FNFHealthBar extends flixel.group.FlxSpriteGroup{
 
 	public var iconScale(default, set) = 1.0;
 	function set_iconScale(value:Float){
-		iconP1.scale.set(value, value);
-		iconP2.scale.set(value, value);
+		leftIcon.scale.set(value, value);
+		rightIcon.scale.set(value, value);
 
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
+		leftIcon.updateHitbox();
+		rightIcon.updateHitbox();
 
 		iconScale = value;
 		updateIconPos();
@@ -4990,6 +4915,17 @@ class FNFHealthBar extends flixel.group.FlxSpriteGroup{
 
 	function updateIconPos(){
 		var scaleOff = 75 * iconScale;
+
+		/*
+		var leftIcon = leftIcon;
+		var	rightIcon = rightIcon;
+
+		if (isOpponentMode){
+			leftIcon = this.rightIcon;
+			rightIcon = this.leftIcon;
+		}
+		*/
+
 		leftIcon.x = healthBarPos - scaleOff - iconOffset * 2;
 		rightIcon.x = healthBarPos + scaleOff - 75 - iconOffset;
 	}
@@ -4997,75 +4933,31 @@ class FNFHealthBar extends flixel.group.FlxSpriteGroup{
 	private var healthBarPos:Float;
 	private function updateHealthBarPos()
 	{
-		var relValue = value/max;
-		if (!flipX) relValue = 1-relValue;
+		healthBarPos = leftSide.x + leftSide.width;
 
-		//trace(value, relValue);
+		var relValue = leftSide.width / fillW;
 
-		healthBarPos = x + fillW * relValue;
+		leftIcon.animation.curAnim.curFrame = relValue < 0.2 ? 1 : 0; // 20% ?
+		rightIcon.animation.curAnim.curFrame = relValue > 0.8 ? 1 : 0; // 80% ?
 
-		iconP1.animation.curAnim.curFrame = relValue < 0.2 ? 1 : 0; // 20% ?
-		iconP2.animation.curAnim.curFrame = relValue > 0.8 ? 1 : 0; // 80% ?
-
+		/*
 		var leftColor = emptyColor;
 		var	rightColor = fillColor;	
 		if (flipX){
 			leftColor = fillColor;
 			rightColor = emptyColor;
 		}
-		
-		var leftW:Int = Math.floor(fillW * relValue);
-		var rightW:Int = fillW - leftW;
-
-		leftSide.color = leftColor;
-		leftSide.setPosition(healthBarBG.x + fillX, healthBarBG.y + fillY);
-		if (leftW > 0){
-			leftSide.setGraphicSize(leftW, fillH);
-			leftSide.updateHitbox();
-			leftSide.visible = true;
-		}else{
-			leftSide.visible = false;
-		}
-		
-		rightSide.color = rightColor;
-		rightSide.setPosition(leftSide.x + leftW, leftSide.y);
-		if (rightW > 0){
-			rightSide.setGraphicSize(rightW, fillH);
-			rightSide.updateHitbox();
-			rightSide.visible = true;
-		}else{
-			rightSide.visible = false;
-		}
-
-		/*
-		var rectangle = new openfl.geom.Rectangle(0, 0, healthBarBG.graphic.bitmap.width, healthBarBG.graphic.bitmap.height);
-		healthBarBG.graphic.bitmap.fillRect(rectangle, 0x00000000);
-		healthBarBG.graphic.bitmap.copyPixels(bitmapShit, rectangle, new Point(), null, null, true);
-
-		rectangle.width = healthBarPos;
-		healthBarBG.graphic.bitmap.colorTransform(
-			rectangle, 
-				new ColorTransform(
-				emptyColor.redFloat,
-				emptyColor.greenFloat,
-				emptyColor.blueFloat,
-				1
-			)
-		);
-
-		rectangle.x = healthBarPos;
-		rectangle.width = healthBarBG.graphic.bitmap.width - healthBarPos;
-		healthBarBG.graphic.bitmap.colorTransform(
-			rectangle, 
-				new ColorTransform(
-				fillColor.redFloat,
-				fillColor.greenFloat,
-				fillColor.blueFloat,
-				1
-			)
-		);
-		
 		*/
+	}
+	override function updateBar()
+	{
+		super.updateBar();
+
+		if (doHealthBarUpdates)
+		{
+			updateHealthBarPos();
+			updateIconPos();
+		}
 	}
 
 	override function update(elapsed:Float)

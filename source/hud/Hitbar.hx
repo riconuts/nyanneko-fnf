@@ -69,8 +69,10 @@ class Hitbar extends FlxSpriteGroup {
 		add(badWindow);
 		add(goodWindow);
 		add(sickWindow);
+		/* // NO EPICSSS
         if(ClientPrefs.useEpics)
 		    add(epicWindow);
+		*/
         
 		epicWindow.x = mainBar.x + ((mainBar.width - epicWindow.width)) / 2;
 		sickWindow.x = mainBar.x + ((mainBar.width - sickWindow.width)) / 2;

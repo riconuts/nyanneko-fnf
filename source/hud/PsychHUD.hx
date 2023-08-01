@@ -31,7 +31,7 @@ class PsychHUD extends BaseHUD
 		songHighscore = Highscore.getScore(songName);
 		songWifeHighscore = Highscore.getNotesHit(songName);
 
-		scoreTxt = new FlxText(0, healthBarBG.y + 48, FlxG.width, "", 20);
+		scoreTxt = new FlxText(0, healthBar.y + 48, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
@@ -86,7 +86,7 @@ class PsychHUD extends BaseHUD
 	{
 		super.changedOptions(changed);
 
-		scoreTxt.y = healthBarBG.y + 48;
+		scoreTxt.y = healthBar.y + 48;
 
 		hitbar.visible = ClientPrefs.hitbar;
 
