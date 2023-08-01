@@ -30,17 +30,19 @@ class ResetScoreSubState extends MusicBeatSubstate
 		add(bg);
 
 		var tooLong:Float = (name.length > 18) ? 0.8 : 1; //Fucking Winter Horrorland
-		var text:Alphabet = new Alphabet(0, 180 + FlxG.camera.scroll.y, "Reset the score of", true);
+		var text:Alphabet = new Alphabet(0, 180 + FlxG.camera.scroll.y, "Reset score?", true);
 		text.screenCenter(X);
 		alphabetArray.push(text);
 		text.alpha = 0;
 		add(text);
+		/*
 		var text:Alphabet = new Alphabet(0, text.y + 90, name + "?", true, false, 0.05, tooLong);
 		text.screenCenter(X);
 		//if(!this.isChapter) text.x += 60 * tooLong;
 		alphabetArray.push(text);
 		text.alpha = 0;
 		add(text);
+		*/
 
 		/*
 		if(week == -1) {

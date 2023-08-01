@@ -37,7 +37,6 @@ class LoadingState extends MusicBeatState
 
 		/* Doesn't actually load anything >< sorry
 		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
-		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
 		loadBar.screenCenter(X);
 		add(loadBar);
 		*/

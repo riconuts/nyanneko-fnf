@@ -216,6 +216,8 @@ class FlxText extends FlxSprite
 		drawFrame();
 
 		shadowOffset = FlxPoint.get(1, 1);
+
+		antialiasing = true;
 	}
 
 	/**

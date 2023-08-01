@@ -494,7 +494,6 @@ class Note extends NoteObject
 				}else{	
 					frames = Paths.getSparrowAtlas(dir + blahblah);
 					loadNoteAnims();
-					antialiasing = ClientPrefs.globalAntialiasing;
 					break;
 				}
 			}

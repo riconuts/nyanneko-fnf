@@ -158,7 +158,6 @@ class Character extends FlxSprite
 		#end
 		curCharacter = character;
 		this.isPlayer = isPlayer;
-		antialiasing = ClientPrefs.globalAntialiasing;
 		
 		switch (curCharacter)
 		{
@@ -239,9 +238,6 @@ class Character extends FlxSprite
 				if(json.healthbar_colors != null && json.healthbar_colors.length > 2)
 					healthColorArray = json.healthbar_colors;
 
-				antialiasing = !noAntialiasing;
-				if(!ClientPrefs.globalAntialiasing) antialiasing = false;
-
 				animationsArray = json.animations;
 				if(animationsArray != null && animationsArray.length > 0) {
 					for (anim in animationsArray) {
@@ -251,8 +247,7 @@ class Character extends FlxSprite
 						var animLoop:Bool = !!anim.loop; //Bruh
 						var animIndices:Array<Int> = anim.indices;
 						var camOffset:Null<Array<Float>> = anim.cameraOffset;
-
-
+						
 						if(camOffset==null){
 							switch(animAnim){
 								case 'singLEFT' | 'singLEFTmiss' | 'singLEFT-alt':

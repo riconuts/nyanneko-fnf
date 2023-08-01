@@ -19,12 +19,12 @@ class BaseHUD extends FlxSpriteGroup {
 	var stats:Stats;
 	// just some ref vars
 	static var fullDisplays:Map<String, String> = [
-		//"epic" => "Killers", // NO EPICS
-		"sick" => "Awesomes",
-		"good" => "Cools",
-		"bad" => "Gays",
-		"shit" => "Retards",
-		"miss" => "Fails",
+		//"epic" => "Epics", // NO EPICS
+		"sick" => "Sicks",
+		"good" => "Goods",
+		"bad" => "Bads",
+		"shit" => "Shits",
+		"miss" => "Misses",
 		"cb" => "Combo Breaks"
 	];
 

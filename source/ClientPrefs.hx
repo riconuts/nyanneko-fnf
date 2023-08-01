@@ -29,6 +29,7 @@ typedef OptionData =
 class ClientPrefs
 {
 	static var defaultOptionDefinitions = getOptionDefinitions();
+	public static var globalAntialiasing = false;
 
 	inline public static function getOptionDefinitions():Map<String, OptionData>
 	{
@@ -479,6 +480,7 @@ class ClientPrefs
 				value: false,
 				data: []
 			},
+			/*
 			"globalAntialiasing" => {
 				display: "Antialiasing",
 				desc: "When toggled, sprites are able to be antialiased.",
@@ -486,6 +488,7 @@ class ClientPrefs
 				value: false,
 				data: []
 			},
+			*/
 			"multicoreLoading" => {
 				display: "Multicore Loading",
 				desc: "When toggled, multiple threads will be used for asset loading when possible.\nMay cause crashes, but speeds up load times.",

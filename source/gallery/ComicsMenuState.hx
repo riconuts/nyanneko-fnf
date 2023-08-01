@@ -372,7 +372,6 @@ class ComicReader extends MusicBeatState
 		FlxG.cameras.add(camComic, true);
 		FlxG.cameras.add(camHUD, false);
 
-		camComic.antialiasing = ClientPrefs.globalAntialiasing;
 		camComic.follow(camFollowPos, LOCKON, 1);
 
 		//
