@@ -3,7 +3,7 @@ package;
 import flixel.graphics.FlxGraphic;
 import flixel.*;
 import flixel.math.*;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.*;
 import flixel.util.FlxColor;
@@ -257,7 +257,7 @@ class CreditsState extends MusicBeatState
 				icon.color = 0xFFFFFFFF;
 
                 var descText = data[2];
-                if (descText == null){
+                if (descText == null || descText.rtrim().length < 1){
                     hintText.alpha = 0;
                     hintText.text = "";
                 }else{

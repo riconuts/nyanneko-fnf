@@ -29,12 +29,12 @@ class BaseHUD extends FlxSpriteGroup {
 	];
 
 	static var shortenedDisplays:Map<String, String> = [
-		//"epic" => "KL", // NO EPICS
-		"sick" => "AW",
-		"good" => "CL",
-		"bad" => "GY",
-		"shit" => "RT",
-		"miss" => "L",
+		//"epic" => "EP", // NO EPICS
+		"sick" => "SK",
+		"good" => "GD",
+		"bad" => "BD",
+		"shit" => "ST",
+		"miss" => "MS",
 		"cb" => "CB"
 	];
 	
@@ -184,8 +184,10 @@ class BaseHUD extends FlxSpriteGroup {
 		super.update(elapsed);
 	}
 
+	public var iconBeat = true;
 	public function beatHit(beat:Int){
-		healthBar.iconScale = 1.2;
+		if (iconBeat)
+			healthBar.iconScale = 1.2;
 	}
 
 	public function changedOptions(changed:Array<String>){

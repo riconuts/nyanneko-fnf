@@ -65,7 +65,6 @@ class MainMenuState extends MusicBeatState
 			"play" => {
 				text: "play ^o^", 
 				onSelect: ()->{
-					FlxTween.tween(titleGrp, {x: -760, alpha: 0}, 0.6, {ease: FlxEase.expoOut});
 					fadeTexts(()->{
 						LoadingState.loadAndSwitchState(new PlayState());
 					});
@@ -180,17 +179,17 @@ class MainMenuState extends MusicBeatState
 		titleGrp = new FlxSpriteGroup();
 		add(titleGrp);
 
-		titleBg = new FlxSprite(0, 0).makeGraphic(760, 100, 0xFF666666);
+		titleBg = new FlxSprite().makeGraphic(artWidth, 100, 0xFF666666);
 		titleGrp.add(titleBg);
 
-		titleTxt = new FlxText(60, 0, 0, "nyan neko sugar girls ^o^", 48);
+		titleTxt = new FlxText(60, 0, 0, "nyan neko sugar girls ^o^", 36);
 		titleTxt.font = Paths.font("segoepr.ttf");
 		titleTxt.color = 0xFFCCCCCC;
 		titleTxt.y = Std.int(titleBg.y + (titleBg.height - titleTxt.height) / 2);
 		titleGrp.add(titleTxt);
 
-		//titleGrp.x = -760;
-		titleGrp.y = 24;
+		//titleGrp.x = -titleGrp.width;
+		titleGrp.y = FlxG.height - 366 * (artWidth/380) - titleGrp.height;
 
 		var scoreTxt = new FlxText(8, FlxG.height - 30, 0, '', 16);
 		scoreTxt.setFormat(Paths.font("segoepr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -238,14 +237,17 @@ class MainMenuState extends MusicBeatState
 		}
 
 		var optionName = optionNames[curSelected];
-		artSpr.animation.play(optionName);
+		artSpr.animation.play(optionName, true, false, artSpr.animation.curAnim == null ? 0 : artSpr.animation.curAnim.curFrame);
+		artSpr.setGraphicSize(artWidth);
 		artSpr.updateHitbox();
-		artSpr.screenCenter(Y);
+
 		artSpr.x = switch(optionName){
 			case "play" | "credits": artWidth - artSpr.width;
 			case "donate": 0;
 			default: (artWidth - artSpr.width) / 2;
 		}
+		artSpr.y = FlxG.height - artSpr.height;
+
 		artSpr.exists = true;
 	}
 
@@ -269,25 +271,29 @@ class MainMenuState extends MusicBeatState
 
 		if (optionNames[curSelected] != "options"){
 			artSpr.updateHitbox();
-			artSpr.origin.x = artWidth - artSpr.x;
+			//artSpr.origin.x = artWidth - artSpr.x;
+
 			FlxTween.tween(artSpr, {alpha: 0}, 0.6, {ease: FlxEase.expoOut, onUpdate: (twn)->{
-				artSpr.scale.x = 1-FlxEase.expoOut(twn.percent);
+				//artSpr.scale.x = 1 - FlxEase.expoOut(twn.percent);
 			}});
 		}else{
 			FlxTween.tween(artSpr, {alpha: 0}, 0.6, {ease: FlxEase.expoOut, onUpdate: (twn)->{
-				artSpr.scale.y = 1-FlxEase.expoOut(twn.percent);
+				//artSpr.scale.y = 1 - FlxEase.expoOut(twn.percent);
 			}});
 		}
+
+		FlxTween.tween(titleGrp, {/*x: -760,*/ alpha: 0}, 0.6, {ease: FlxEase.expoOut});
 	}
 
 
 	var inputsEnabled = true;
 	override function update(elapsed:Float) {
 		if (inputsEnabled){
-			if (controls.UI_UP_P)
-				changeSelected(-1);
-			if (controls.UI_DOWN_P)
-				changeSelected(1);
+			var movement:Int = -FlxG.mouse.wheel;
+			if (controls.UI_UP_P) movement--;
+			if (controls.UI_DOWN_P) movement++;
+			if (movement != 0) changeSelected(movement);
+
 			if (controls.ACCEPT)
 				onAccept();
 			else if (FlxG.keys.justPressed.CONTROL)

@@ -114,7 +114,7 @@ class FunkinHScript extends FunkinScript
 		set("FlxSprite", flixel.FlxSprite);
 		set("FlxCamera", flixel.FlxCamera);
 		set("FlxMath", flixel.math.FlxMath);
-		set("FlxSound", flixel.system.FlxSound);
+		set("FlxSound", flixel.sound.FlxSound);
 		set("FlxTimer", flixel.util.FlxTimer);
 		set("FlxTween", FlxTween);
 		set("FlxEase", FlxEase);

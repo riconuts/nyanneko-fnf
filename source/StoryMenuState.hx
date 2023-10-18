@@ -1,6 +1,6 @@
 package;
 
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import ChapterData;
 import flixel.addons.display.shapes.FlxShapeBox;
 import flixel.group.FlxGroup;

@@ -63,15 +63,18 @@ class HealthIcon extends FlxSprite
 
 	private var iconOffsets:Array<Float> = [0, 0];
 	public function changeIcon(char:String) {
-		var file:Null<FlxGraphic> = Paths.image('icons/$char');
+		var graphic:Null<FlxGraphic> = Paths.image('icons/$char');
 
-		if(file == null)
-			file = Paths.image('icons/icon-$char'); // psych compat
+		if(graphic == null)
+			graphic = Paths.image('icons/icon-$char'); // psych compat
 		
-		if(file == null) 
-			file = Paths.image('icons/face'); // Prevents crash from missing icon
+		if(graphic == null) 
+			graphic = Paths.image('icons/face');
 
-		changeIconGraphic(file);
+		if (graphic == null)
+			graphic = FlxGraphic.fromRectangle(300, 150, 0x00000000, false, "fallbackIcon");  // Prevents crash from missing icon
+
+		changeIconGraphic(graphic);
 		this.char = char;
 
 		antialiasing = char.endsWith("-pixel") ? false : null;

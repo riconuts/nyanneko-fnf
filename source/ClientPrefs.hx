@@ -29,7 +29,14 @@ typedef OptionData =
 class ClientPrefs
 {
 	static var defaultOptionDefinitions = getOptionDefinitions();
+
+	// fuck these
 	public static var globalAntialiasing = false;
+	public static var directionalCam = false;
+	public static var bread = false;
+	public static var useEpics = false; // commented out of the code too since some stuff is hardcoded 
+	public static var lowQuality = false;
+	public static var drawDistanceModifier = 1;
 
 	inline public static function getOptionDefinitions():Map<String, OptionData>
 	{
@@ -49,6 +56,7 @@ class ClientPrefs
 				value: true,
 				data: []
 			},
+			/*
 			"directionalCam" => {
 				display: "Directional Camera",
 				desc: "When toggled, the camera will move with the focused character's animations",
@@ -56,6 +64,8 @@ class ClientPrefs
 				value: false,
 				data: []
 			},
+			*/
+			/*
 			"bread" => {
 				display: "Garlic Bread",
 				desc: "Garlic Bread. You're welcome, Wolfy.",
@@ -63,6 +73,7 @@ class ClientPrefs
 				value: false,
 				data: []
 			},
+			*/
 			"judgePreset" => {
 				display: "Judgement Preset",
 				desc: "Preset for the judgement windows.",
@@ -119,6 +130,7 @@ class ClientPrefs
 					"type" => "percent" // saved value is value / 100
 				]
 			},
+			/*
 			"useEpics" => {
 				display: "Use Killers",
 				desc: "When toggled, killers will be used as the highest judgement.",
@@ -126,6 +138,7 @@ class ClientPrefs
 				value: false,
 				data: []
 			},
+			*/
 			"flashing" => {
 				display: "Flashing Lights",
 				desc: "When toggled, flashing lights will be shown ingame.",
@@ -404,29 +417,29 @@ class ClientPrefs
 			},
 			// judgement-related (gameplay)
 			"epicWindow" => {
-				display: "Killer Window",
-				desc: "The hit window to hit a Killer judgement.",
+				display: "Epic Window",
+				desc: "The hit window to hit a Epic judgement.",
 				type: Number,
 				value: 22,
 				data: ["suffix" => "ms", "min" => 0, "max" => 200, "step" => 0.1]
 			},
 			"sickWindow" => {
-				display: "Awesome Window",
-				desc: "The hit window to hit an Awesome judgement.",
+				display: "Sick Window",
+				desc: "The hit window to hit an Sick judgement.",
 				type: Number,
 				value: 45,
 				data: ["suffix" => "ms", "min" => 0, "max" => 200, "step" => 0.1]
 			},
 			"goodWindow" => {
-				display: "Cool Window",
-				desc: "The hit window to hit a Cool judgement.",
+				display: "Good Window",
+				desc: "The hit window to hit a Good judgement.",
 				type: Number,
 				value: 90,
 				data: ["suffix" => "ms", "min" => 0, "max" => 200, "step" => 0.1]
 			},
 			"badWindow" => {
-				display: "Gay Window",
-				desc: "The hit window to hit a Gay judgement.",
+				display: "Bad Window",
+				desc: "The hit window to hit a Bad judgement.",
 				type: Number,
 				value: 135,
 				data: ["suffix" => "ms", "min" => 0, "max" => 200, "step" => 0.1]
@@ -438,6 +451,7 @@ class ClientPrefs
 				value: 166,
 				data: ["suffix" => "ms", "min" => 0, "max" => 200, "step" => 0.1]
 			},
+			/*
 			"drawDistanceModifier" => {
 				display: "Draw Distance Multiplier",
 				desc: "Changes how close or far a note must be before it starts being drawn.",
@@ -445,6 +459,7 @@ class ClientPrefs
 				value: 1,
 				data: ["suffix" => "x", "min" => 0.5, "max" => 2, "step" => 0.1]
 			},
+			*/
 			"customizeColours" => {
 				display: "Customize Colors",
 				desc: "Lets you change the colours of your notes.",
@@ -473,6 +488,7 @@ class ClientPrefs
 				value: 60,
 				data: ["suffix" => " FPS", "min" => 30, "max" => 240, "step" => 1,]
 			},
+			/*
 			"lowQuality" => {
 				display: "Low Quality",
 				desc: "When toggled, many assets won't be loaded to try to reduce strain on lower-end PCs.",
@@ -480,6 +496,7 @@ class ClientPrefs
 				value: false,
 				data: []
 			},
+			*/
 			/*
 			"globalAntialiasing" => {
 				display: "Antialiasing",

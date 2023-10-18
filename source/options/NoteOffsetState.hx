@@ -88,6 +88,7 @@ class NoteOffsetState extends MusicBeatState
 		add(stageOpacity);
 
 		//// Characters
+		/*
 		gf = new Character(stageData.girlfriend[0], stageData.girlfriend[1], 'gf');
 		gf.x += gf.positionArray[0];
 		gf.y += gf.positionArray[1];
@@ -104,6 +105,7 @@ class NoteOffsetState extends MusicBeatState
 			-FlxG.width * 0.5 + boyfriend.x + boyfriend.width * 0.5 + (boyfriend.cameraPosition[0] + 150) * boyfriend.xFacing,
 			-FlxG.height * 0.5 + boyfriend.y + boyfriend.height * 0.5 + boyfriend.cameraPosition[1] - 100
 		);
+		*/
 
 		// Stage Foreground
 		add(stage.foreground);
@@ -391,11 +393,13 @@ class NoteOffsetState extends MusicBeatState
 			return;
 		}
 
+		/*
 		if(curBeat % 2 == 0)
 		{
 			boyfriend.dance();
 			gf.dance();
 		}
+		*/
 		
 		if(curBeat % 4 == 2)
 		{

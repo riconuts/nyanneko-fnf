@@ -4,7 +4,7 @@ import lime.app.Application;
 import sowy.TGTMenuShit;
 import flixel.addons.display.FlxBackdrop;
 import flixel.util.FlxTimer;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.tweens.FlxTween;
 import flixel.text.FlxText;
 import flixel.text.FlxText.FlxTextBorderStyle;

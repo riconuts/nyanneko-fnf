@@ -251,7 +251,7 @@ class OptionsSubstate extends MusicBeatSubstate
 				[
 					"downScroll",
 					"ghostTapping", 
-					"directionalCam", 
+					//"directionalCam", 
 					"noteOffset", 
 					"ratingOffset",
 				]
@@ -336,12 +336,12 @@ class OptionsSubstate extends MusicBeatSubstate
 			[
 				"Performance",
 				[
-					"lowQuality",
+					//"lowQuality",
 					//"globalAntialiasing",
 					"multicoreLoading",
 					"optimizeHolds",
 					"holdSubdivs",
-					"drawDistanceModifier" // apparently i forgot to add this in the new options thing lmao
+					// "drawDistanceModifier" // apparently i forgot to add this in the new options thing lmao
 				]
 			]
 		],
@@ -595,8 +595,8 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		optionDesc = new FlxText(5, FlxG.height - 48, 0, "", 20);
 		optionDesc.setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		optionDesc.textField.background = true;
 		optionDesc.textField.backgroundColor = 0xCC000000;
+		optionDesc.textField.background = true;
 		optionDesc.screenCenter(XY);
 		optionDesc.cameras = [overlayCamera];
 		optionDesc.alpha = 0;

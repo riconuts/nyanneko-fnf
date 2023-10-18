@@ -30,7 +30,7 @@ class ResetScoreSubState extends MusicBeatSubstate
 		add(bg);
 
 		var tooLong:Float = (name.length > 18) ? 0.8 : 1; //Fucking Winter Horrorland
-		var text:Alphabet = new Alphabet(0, 180 + FlxG.camera.scroll.y, "Reset score?", true);
+		var text:Alphabet = new Alphabet(0, 180 + FlxG.camera.scroll.y, "Reset High Score?", true);
 		text.screenCenter(X);
 		alphabetArray.push(text);
 		text.alpha = 0;
