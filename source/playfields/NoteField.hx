@@ -1,18 +1,18 @@
 package playfields;
 
-import flixel.math.FlxMatrix;
-import modchart.Modifier.RenderInfo;
-import flixel.math.FlxPoint;
-import openfl.geom.ColorTransform;
-import flixel.graphics.FlxGraphic;
-import openfl.display.Shader;
+import math.*;
 import flixel.math.FlxMath;
-import math.Vector3;
-import flixel.system.FlxAssets.FlxShader;
-import modchart.ModManager;
-import openfl.Vector;
-import flixel.util.FlxSort;
 import flixel.math.FlxAngle;
+import flixel.math.FlxPoint;
+import flixel.math.FlxMatrix;
+import flixel.util.FlxSort;
+import openfl.Vector;
+import openfl.geom.ColorTransform;
+import openfl.display.Shader;
+import flixel.graphics.FlxGraphic;
+import modchart.Modifier.RenderInfo;
+import modchart.ModManager;
+import flixel.system.FlxAssets.FlxShader;
 
 using StringTools;
 
@@ -118,8 +118,9 @@ class NoteField extends FieldBase
 		var taps:Array<Note> = [];
 		var holds:Array<Note> = [];
 		var drawMod = modManager.get("drawDistance");
+		var multAllowed = modManager.get("disableDrawDistMult");
 		var drawDist = drawMod == null ? FlxG.height : drawMod.getValue(modNumber);
-		drawDist *= drawDistMod;
+		if (multAllowed == null || multAllowed.getValue(modNumber) == 0)drawDist *= drawDistMod;
 		for (daNote in field.spawnedNotes)
 		{
 			if (!daNote.alive)
@@ -127,7 +128,7 @@ class NoteField extends FieldBase
 
 			if (songSpeed != 0)
 			{
-				var speed = songSpeed * daNote.multSpeed * modManager.getValue("xmod", modNumber) * modManager.getValue('xmod${daNote.noteData}', modNumber);
+				var speed = modManager.getNoteSpeed(daNote, modNumber, songSpeed);
 				var diff = Conductor.songPosition - daNote.strumTime;
 				var visPos = -((Conductor.visualPosition - daNote.visualTime) * speed);
 				if (visPos > drawDist)
@@ -440,7 +441,7 @@ class NoteField extends FieldBase
 
 			scalePoint.set(1, 1);
 
-			var speed = songSpeed * hold.multSpeed * modManager.getValue("xmod", modNumber) * modManager.getValue('xmod${hold.noteData}', modNumber);
+			var speed = modManager.getNoteSpeed(hold, modNumber, songSpeed);
 
 			var info:RenderInfo = modManager.getExtraInfo((visualDiff + ((strumOff + strumSub) * 0.45)) * -speed, strumDiff + strumOff + strumSub, curDecBeat,
 			{
@@ -559,7 +560,7 @@ class NoteField extends FieldBase
 		var visPos:Float = 0;
 		if((sprite is Note)){
 			var daNote:Note = cast sprite;
-			var speed = songSpeed * daNote.multSpeed * modManager.getValue("xmod", modNumber) * modManager.getValue('xmod${daNote.noteData}', modNumber);
+			var speed = modManager.getNoteSpeed(daNote, modNumber, songSpeed);
 			diff = Conductor.songPosition - daNote.strumTime;
 			visPos = -((Conductor.visualPosition - daNote.visualTime) * speed);
 		}
@@ -593,7 +594,7 @@ class NoteField extends FieldBase
 				vert.x += n.typeOffsetX;
 				vert.y += n.typeOffsetY;
 			}
-			vert = modManager.modifyVertex(curDecBeat, vert, idx, sprite, pos, modNumber, sprite.noteData);
+			vert = modManager.modifyVertex(curDecBeat, vert, idx, sprite, pos, modNumber, sprite.noteData, this);
 			vert.x *= scalePoint.x;
 			vert.y *= scalePoint.y;
 
@@ -655,5 +656,11 @@ class NoteField extends FieldBase
 			vertices: vertices,
 			zIndex: pos.z
 		}
+	}
+
+	override function destroy()
+	{
+		point.put();
+		super.destroy();
 	}
 }

@@ -31,7 +31,10 @@ typedef RenderInfo = {
 
 class Modifier {
 	public var modMgr:ModManager;
-	public var percents:Array<Float> = [0, 0];
+	@:allow(modchart.ModManager)
+	var _percents:Array<Float> = [0, 0];
+    public var percents:Array<Float> = [0, 0];
+
 	public var submods:Map<String, Modifier> = [];
 	public var parent:Modifier; // for submods
 
@@ -131,6 +134,13 @@ class Modifier {
 			submods.set(submod, new SubModifier(submod, modMgr, this));
 	}
 
+    @:allow(modchart.ModManager)
+    private function _internalUpdate(){
+        for(pN in 0...percents.length)
+            _percents[pN] = percents[pN];
+        // ^^ this is done so nodes etc can affect these by changing _percents
+    }
+
 	// Available whenever shouldUpdate() == true
 	public function update(elapsed:Float, beat:Float){}
 
@@ -148,7 +158,8 @@ class Modifier {
     public function updateReceptor(beat:Float, receptor:StrumNote, player:Int){}
 	public function updateNote(beat:Float, note:Note, player:Int){}
 	public function getPos(diff:Float, tDiff:Float, beat:Float, pos:Vector3, data:Int, player:Int, obj:FlxSprite, field:NoteField):Vector3{return pos;}
-	public function modifyVert(beat:Float, vert:Vector3, idx:Int, obj:FlxSprite, pos:Vector3, player:Int, data:Int):Vector3{return vert;}
+	public function modifyVert(beat:Float, vert:Vector3, idx:Int, obj:FlxSprite, pos:Vector3, player:Int, data:Int, field:NoteField):Vector3{return vert;}
 	public function getExtraInfo(diff:Float, tDiff:Float, beat:Float, info:RenderInfo, obj:FlxSprite, player:Int, data:Int):RenderInfo{return info;}
 	public function isRenderMod():Bool{return false;} // Override and return true if your modifier uses modifyVert or getExtraInfo
+    public function getAliases():Map<String,String>{return [];}
 }

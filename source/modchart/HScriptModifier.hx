@@ -10,6 +10,7 @@ import math.Vector3;
 class HScriptModifier extends Modifier
 {
 	public var script:FunkinHScript;
+	public var name:String = "unknown";
 
 	public function new(modMgr:ModManager, ?parent:Modifier, script:FunkinHScript) 
 	{
@@ -29,19 +30,15 @@ class HScriptModifier extends Modifier
 		script.set("setSubmodValue", setSubmodValue);
 		script.set("setSubmodPercent", setSubmodPercent);
 
-		/*
-		for (fieldName in Type.getInstanceFields(HScriptModifier))
-			script.set(fieldName, Reflect.getProperty(this, fieldName));
-		*/
-
-        script.executeFunc("onCreate");
+		script.executeFunc("onCreate");
 
 		super(this.modMgr, this.parent);
 
-        script.executeFunc("onCreatePost");
+		script.executeFunc("onCreatePost");
 	}
 
-	static final _scriptEnums:Map<String, Dynamic> = [
+	@:noCompletion
+	private static final _scriptEnums:Map<String, Dynamic> = [
 		"NOTE_MOD" => NOTE_MOD,
 		"MISC_MOD" => MISC_MOD,
 
@@ -58,22 +55,24 @@ class HScriptModifier extends Modifier
 		return new HScriptModifier(
 			modMgr, 
 			parent, 
-			FunkinHScript.fromString(scriptSource, "HScriptModifier", _scriptEnums)
+			FunkinHScript.fromString(scriptSource, "HScriptModifier", _scriptEnums, false)
 		);
 	}
 
 	public static function fromName(modMgr:ModManager, ?parent:Modifier, scriptName:String):Null<HScriptModifier>
-	{
+	{		
 		var fileName:String = 'modifiers/$scriptName.hscript';
-		for (file in [#if MODS_ALLOWED Paths.modFolders(fileName), #end Paths.getPreloadPath(fileName)])
+		for (filePath in [#if MODS_ALLOWED Paths.modFolders(fileName), #end Paths.getPreloadPath(fileName)])
 		{
-			if (!Paths.exists(file)) continue;
+			if (!Paths.exists(filePath)) continue;
 
-			return new HScriptModifier(
+			var mod = new HScriptModifier(
 				modMgr, 
 				parent, 
-				FunkinHScript.fromFile(file, _scriptEnums)
+				FunkinHScript.fromFile(filePath, filePath, _scriptEnums, false)
 			);
+			mod.name = scriptName;
+			return mod;
 		}
 
 		trace('Modifier script: $scriptName not found!');
@@ -105,7 +104,7 @@ class HScriptModifier extends Modifier
 		return script.exists("getOrder") ? script.executeFunc("getOrder") : super.getOrder();
 
 	override public function getName():String
-		return script.exists("getName") ? script.executeFunc("getName") : super.getName();
+		return script.exists("getName") ? script.executeFunc("getName") : name;
 
 	// shouldnt be overriding getValue/getPercent/etc
 	// they're used purely to get the value of a modifier and should not be overwritten
@@ -142,12 +141,10 @@ class HScriptModifier extends Modifier
 	override public function getPos(diff:Float, tDiff:Float, beat:Float, pos:Vector3, data:Int, player:Int, obj:FlxSprite, field:NoteField):Vector3 
 		return script.exists("getPos") ? script.executeFunc("getPos", [diff, tDiff, beat, pos, data, player, obj, field]) : super.getPos(diff, tDiff, beat, pos, data, player, obj, field);
 
-	override public function modifyVert(beat:Float, vert:Vector3, idx:Int, obj:FlxSprite, pos:Vector3, player:Int, data:Int):Vector3 
-		return script.exists("modifyVert") ? script.executeFunc("modifyVert", [beat, vert, idx, obj, pos, player, data]) : super.modifyVert(beat, vert, idx, obj, pos, player, data);
-/* 
-	override public function getAlpha(beat:Float, alpha:Float, obj:FlxSprite, player:Int, data:Int):Float 
-		return script.exists("getAlpha") ? script.executeFunc("getAlpha", [beat, alpha, obj, player, data]) : super.getAlpha(beat, alpha, obj, player, data);
- */
+	override public function modifyVert(beat:Float, vert:Vector3, idx:Int, obj:FlxSprite, pos:Vector3, player:Int, data:Int, field:NoteField):Vector3 
+		return script.exists("modifyVert") ? script.executeFunc("modifyVert",
+			[beat, vert, idx, obj, pos, player, data, field]) : super.modifyVert(beat, vert, idx, obj, pos, player, data, field);
+
 	override public function getExtraInfo(diff:Float, tDiff:Float, beat:Float, info:RenderInfo, obj:FlxSprite, player:Int, data:Int):RenderInfo
 	{
 		return script.exists("getExtraInfo") ? script.executeFunc("getExtraInfo",

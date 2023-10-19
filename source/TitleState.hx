@@ -18,6 +18,7 @@ import haxe.Json;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
+import shaders.ColorSwap;
 
 using StringTools;
 #if discord_rpc

@@ -183,7 +183,7 @@ class MusicBeatState extends FlxUIState
 				menuVox.destroy();
 				menuVox = null;
 			}
-			gallery.JukeboxState.playIdx = 0;
+			// gallery.JukeboxState.playIdx = 0;
 
 			#if MODS_ALLOWED
 			// i NEED to rewrite the paths shit for real 

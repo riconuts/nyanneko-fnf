@@ -1,5 +1,6 @@
 package newoptions;
 
+import flixel.sound.FlxSound;
 import flixel.input.keyboard.FlxKey;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -12,8 +13,7 @@ import openfl.geom.Rectangle;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.addons.ui.FlxUI9SliceSprite;
-import ClientPrefs.OptionData;
-import ClientPrefs.OptionType;
+import ClientPrefs;
 
 typedef Widget =
 {
@@ -155,14 +155,19 @@ class OptionsSubstate extends MusicBeatSubstate
 			case 'showFPS':
 				if (Main.fpsVar != null)
 					Main.fpsVar.visible = val;
-			case 'globalAntialising':
+			case 'bread':
+				if (Main.bread != null)
+					Main.bread.visible = val;
+			case 'globalAntialiasing':
 				FlxSprite.defaultAntialiasing = val;
+			case 'lowQuality':
+				FlxG.stage.quality = val ? openfl.display.StageQuality.LOW : openfl.display.StageQuality.HIGH; // fucking useless!?!?
 			#if DO_AUTO_UPDATE
 			case 'downloadBetas' | 'checkForUpdates':
 				Main.downloadBetas = MainMenuState.beta || ClientPrefs.downloadBetas;
 				if(!MainMenuState.beta || option == 'checkForUpdates'){
 					StartupState.getRecentGithubRelease();
-					Main.checkOutOfDate();
+					StartupState.checkOutOfDate();
 				}
 			#end
 			default:
@@ -208,25 +213,30 @@ class OptionsSubstate extends MusicBeatSubstate
 		}
 	}
 
+	private var previewSound:Null<FlxSound> = null;
+	function playPreviewSound(name:String, volume:Float = 1){
+		if (previewSound != null) previewSound.stop().destroy();
+		previewSound = FlxG.sound.play(Paths.sound(name), volume, false, null, true, ()->{previewSound = null;});
+	}
+
 	function onNumberChanged(option:String, oldVal:Float, newVal:Float)
 	{
 		switch (option)
 		{
 			case 'framerate':
-				if (newVal > FlxG.drawFramerate)
-				{
+				if (newVal > FlxG.drawFramerate){
 					FlxG.updateFramerate = Math.floor(newVal);
 					FlxG.drawFramerate = Math.floor(newVal);
-				}
-				else
-				{
+				}else{
 					FlxG.drawFramerate = Math.floor(newVal);
 					FlxG.updateFramerate = Math.floor(newVal);
 				}
 			case 'epicWindow' | 'sickWindow' | 'goodWindow' | 'badWindow' | 'hitWindow':
 				checkWindows();
-			default:
-				// nothing
+			case 'hitsoundVolume':
+				playPreviewSound("hitsound", newVal / 100);
+			case 'missVolume':
+				playPreviewSound('missnote${FlxG.random.int(1, 3)}', newVal / 100);
 		}
 	}
 
@@ -310,7 +320,7 @@ class OptionsSubstate extends MusicBeatSubstate
 					"judgeOpacity",
 					"stageOpacity", 
 					"scoreZoom", 
-					"judgeBehind",
+					//"judgeBehind",
 					"npsDisplay", 
 					"showMS", 
 					"coloredCombos",
@@ -470,15 +480,21 @@ class OptionsSubstate extends MusicBeatSubstate
 
 
 		////
-		var optionMenu = new FlxSprite(84, 80, CoolUtil.makeOutlinedGraphic(FlxMath.minInt(920, FlxG.width), FlxG.height-80, FlxColor.fromRGB(82, 82, 82), 2, FlxColor.fromRGB(70, 70, 70)));
+		var optionMenu = new FlxSprite(84, 80, CoolUtil.makeOutlinedGraphic(
+			FlxMath.minInt(920, FlxG.width), 
+			FlxG.height-140, 
+			FlxColor.fromRGB(82, 82, 82), 
+			2, 
+			FlxColor.fromRGB(70, 70, 70)
+		));
 		if (optionMenu.width == FlxG.width) optionMenu.x = 0;
 		optionMenu.alpha = 0.8;
 		add(optionMenu);
 
 		optionCamera.width = Std.int(optionMenu.width);
-		optionCamera.height = Std.int(optionMenu.height);
+		optionCamera.height = Std.int(optionMenu.height - 4);
 		optionCamera.x = optionMenu.x;
-		optionCamera.y = optionMenu.y;
+		optionCamera.y = optionMenu.y + 2;
 
 		optionCamera.targetOffset.x = optionCamera.width / 2;
 		optionCamera.targetOffset.y = optionCamera.height / 2;
@@ -488,14 +504,14 @@ class OptionsSubstate extends MusicBeatSubstate
 		var lastX:Float = optionMenu.x;
 		for (idx in 0...optionOrder.length)
 		{
-			var name = optionOrder[idx];
+			var tabName = optionOrder[idx];
 
 			var button = new FlxSprite(lastX, optionMenu.y - 3).makeGraphic(1, 44, FlxColor.WHITE);
 			button.ID = idx;
 			button.color = idx == 0 ? FlxColor.fromRGB(128, 128, 128) : FlxColor.fromRGB(82, 82, 82);
 			button.alpha = 0.75;
 
-			var text = new FlxText(button.x, button.y, 0, name.toUpperCase(), 16);
+			var text = new FlxText(button.x, button.y, 0, tabName.toUpperCase(), 16);
 			text.setFormat(Paths.font("segoeprb.ttf"), 32, 0xFFFFFFFF, FlxTextAlign.CENTER);
 			var width = text.fieldWidth < 86 ? 86 : text.fieldWidth;
 			button.setGraphicSize(Std.int(width + 8), Std.int(button.height));
@@ -510,43 +526,46 @@ class OptionsSubstate extends MusicBeatSubstate
 			add(button);
 			add(text);
 			buttons.push(button);
-		}
 
-		// for (data in options.get("Game")){
-		for (name in optionOrder)
-		{
+			////
 			var daY:Float = 0;
 			var group = new FlxTypedGroup<FlxObject>();
 			var widgets:Map<FlxObject, Widget> = [];
-			cameraPositions.push(FlxPoint.weak());
-			for (data in options.get(name))
+			cameraPositions.push(FlxPoint.get());
+
+			for (data in options.get(tabName))
 			{
 				var label = data[0];
-				var daOpts:Array<String> = data[1];
+
 				var text = new FlxText(8, daY, 0, label, 16);
 				text.setFormat(Paths.font("segoeprb.ttf"), 32, 0xFFFFFFFF, FlxTextAlign.LEFT);
 				text.cameras = [optionCamera];
 				group.add(text);
 				daY += text.height;
+
+				var daOpts:Array<String> = data[1];
 				for (opt in daOpts)
 				{
 					if (!actualOptions.exists(opt))
 						continue;
+
 					var data = actualOptions.get(opt);
 					data.data.set("optionName", opt);
+
 					var text = new FlxText(16, daY, 0, data.display, 16);
-					text.cameras = [optionCamera];
 					text.setFormat(Paths.font("segoepr.ttf"), 28, 0xFFFFFFFF, FlxTextAlign.LEFT);
+					text.cameras = [optionCamera];
 					var height = text.height + 12;
-					if (height < 45)
-						height = 45;
-					var drop:FlxUI9SliceSprite = new FlxUI9SliceSprite(text.x - 12, text.y, Paths.image("optionsMenu/backdrop"),
-						new Rectangle(0, 0, optionMenu.width - text.x - 8, height), [22, 22, 89, 89]);
+					if (height < 45) height = 45;
+					
+					var rect = new Rectangle(text.x - 12, text.y, optionMenu.width - text.x - 8, height);
+					
+					var drop:FlxUI9SliceSprite = new FlxUI9SliceSprite(rect.x, rect.y, Paths.image("optionsMenu/backdrop"), rect, [22, 22, 89, 89]);
 					drop.cameras = [optionCamera];
-					var lock:FlxUI9SliceSprite = new FlxUI9SliceSprite(text.x - 12, text.y, Paths.image("optionsMenu/backdrop"),
-						new Rectangle(0, 0, optionMenu.width - text.x - 8, height), [22, 22, 89, 89]);
-					lock.alpha = 0.75;
+					
+					var lock:FlxUI9SliceSprite = new FlxUI9SliceSprite(rect.x, rect.y, Paths.image("optionsMenu/backdrop"), rect, [22, 22, 89, 89]);
 					lock.cameras = [optionCamera];
+					lock.alpha = 0.75;
 					text.y += (height - text.height) / 2;
 
 					var widget = createWidget(opt, drop, text, data);
@@ -579,8 +598,8 @@ class OptionsSubstate extends MusicBeatSubstate
 			daY += 4;
 			var height = daY > optionCamera.height ? daY - optionCamera.height : 0;
 			heights.push(height);
-			groups.set(name, group);
-			allWidgets.set(name, widgets);
+			groups.set(tabName, group);
+			allWidgets.set(tabName, widgets);
 		}
 		add(currentGroup);
 
@@ -595,8 +614,8 @@ class OptionsSubstate extends MusicBeatSubstate
 
 		optionDesc = new FlxText(5, FlxG.height - 48, 0, "", 20);
 		optionDesc.setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		optionDesc.textField.backgroundColor = 0xCC000000;
 		optionDesc.textField.background = true;
+		optionDesc.textField.backgroundColor = FlxColor.BLACK;
 		optionDesc.screenCenter(XY);
 		optionDesc.cameras = [overlayCamera];
 		optionDesc.alpha = 0;
@@ -878,78 +897,6 @@ class OptionsSubstate extends MusicBeatSubstate
 		];
 
 		changeWidget(null, true);
-	}
-
-	//// For keyboard
-	var selectableWidgetObjects:Array<FlxObject> = [];
-	var curOption:Null<Int> = null;
-	var curWidget:Widget;
-
-	function changeWidget(val:Null<Int>, ?isAbs:Bool = false)
-	{
-		var nextOption:Null<Int> = null; 
-
-		if (val != null)
-		{
-			if (curOption == null) curOption = (val<0) ? 0 : -1;
-
-			nextOption = isAbs ? val : (curOption + val);
-
-			if (nextOption < 0) nextOption = selectableWidgetObjects.length + nextOption;
-			nextOption = (selectableWidgetObjects.length > 0) ? (nextOption % selectableWidgetObjects.length) : 0;
-		}
-
-		// highlight and get the option text
-		var nextObject:Null<FlxText> = null;
-		for (idx in 0...selectableWidgetObjects.length)
-		{
-			var object:FlxText = cast selectableWidgetObjects[idx];
-
-			if (idx == nextOption){
-				nextObject = object;
-				object.color = FlxColor.YELLOW;
-			}else
-				object.color = FlxColor.WHITE;
-		}
-
-		if (nextObject != null){
-			var widget:Widget = currentWidgets.get(nextObject);
-
-			// move the camera to the option if it's off-screen
-			if (widget != null){
-				var optBox:FlxObject = widget.data.get("optionBox");
-				var cam = optBox.camera;
-
-				if (optBox.y < cam.scroll.y)
-					camFollow.y = nextOption==0 ? 0 : optBox.y;
-				else{
-					var camTail = cam.scroll.y + cam.height;
-					var optTail = optBox.y + optBox.height;
-
-					if (camTail < optTail)
-						camFollow.y += (optTail - camTail);
-				}
-			}
-
-			if (curWidget != null)
-				onWidgetUnselected(curWidget);
-
-			curWidget = widget;
-		}else{
-			curWidget = null;
-		}
-
-		curOption = nextOption;
-	}
-	
-	function onWidgetUnselected(widget:Widget)
-	{
-		switch(widget.type){
-			case Number:
-				widget.data.get("leftAdjust").release();
-				widget.data.get("rightAdjust").release();
-			default:
-		}
 	}
 
 	////
@@ -1276,15 +1223,91 @@ class OptionsSubstate extends MusicBeatSubstate
 	function getHeight():Float
 		return heights[selected];
 
-	var curHovering:Widget;
+	//// For keyboard
+	var selectableWidgetObjects:Array<FlxObject> = [];
+	var curOption:Null<Int> = null;
+
+	function changeWidget(val:Null<Int>, ?isAbs:Bool = false)
+	{
+		var nextOption:Null<Int> = null; 
+
+		if (val != null)
+		{
+			if (curOption == null) curOption = (val<0) ? 0 : -1;
+
+			nextOption = isAbs ? val : (curOption + val);
+
+			if (nextOption < 0) nextOption = selectableWidgetObjects.length + nextOption;
+			nextOption = (selectableWidgetObjects.length > 0) ? (nextOption % selectableWidgetObjects.length) : 0;
+		}
+
+		// highlight and get the option text
+		var nextObject:Null<FlxText> = null;
+		for (idx in 0...selectableWidgetObjects.length)
+		{
+			var object:FlxText = cast selectableWidgetObjects[idx];
+
+			if (idx == nextOption){
+				nextObject = object;
+				object.color = FlxColor.YELLOW;
+			}else
+				object.color = FlxColor.WHITE;
+		}
+
+		if (nextObject != null){
+			var widget:Widget = currentWidgets.get(nextObject);
+
+			// move the camera to the option if it's off-screen
+			if (widget != null){
+				var optBox:FlxObject = widget.data.get("optionBox");
+				var cam = optBox.camera;
+
+				if (optBox.y < cam.scroll.y)
+					camFollow.y = nextOption==0 ? 0 : optBox.y;
+				else{
+					var camTail = cam.scroll.y + cam.height;
+					var optTail = optBox.y + optBox.height;
+
+					if (camTail < optTail)
+						camFollow.y += (optTail - camTail);
+				}
+			}
+
+			if (curWidget != null)
+				onWidgetUnselected(curWidget);
+
+			curWidget = widget;
+		}else{
+			curWidget = null;
+		}
+
+		curOption = nextOption;
+	}
+	
+	function onWidgetUnselected(widget:Widget)
+	{
+		switch(widget.type){
+			case Number:
+				widget.data.get("leftAdjust").release();
+				widget.data.get("rightAdjust").release();
+			default:
+		}
+	}
+
+	var curWidget:Widget;
 
 	override function update(elapsed:Float)
 	{
 		if (subState == null)
 		{
+			var pHov = curWidget;
+			var doUpdate = false;
+
 			if (FlxG.keys.justPressed.TAB){
 				FlxG.sound.play(Paths.sound("scrollMenu"));
 				changeCategory(1);
+
+				pHov = null;
 			}
 
 			if (FlxG.keys.justPressed.UP){
@@ -1296,26 +1319,65 @@ class OptionsSubstate extends MusicBeatSubstate
 				changeWidget(1);
 			}
 
-			if (curWidget != null){
+			if (curWidget != null && !curWidget.locked){
+				var optionName:String = curWidget.optionData.data.get("optionName");
+
 				switch (curWidget.type){
 					case Toggle:
 						if (FlxG.keys.justPressed.ENTER){
 							var checkbox:Checkbox = curWidget.data.get("checkbox");
 							checkbox.toggled = !checkbox.toggled;
-							changeToggle(curWidget.optionData.data.get("optionName"), checkbox.toggled);
+							changeToggle(optionName, checkbox.toggled);
+
+							doUpdate = true;
 						}
+
+						if (FlxG.keys.justPressed.R){
+							@:privateAccess
+							changeToggle(optionName, ClientPrefs.defaultOptionDefinitions.get(optionName).value);
+							doUpdate = true;
+						}
+						
 					case Button:
-						if (FlxG.keys.justPressed.ENTER && !curWidget.locked){
-							onButtonPressed(curWidget.optionData.data.get("optionName"));
+						if (FlxG.keys.justPressed.ENTER){
+							onButtonPressed(optionName);
+							doUpdate = true;
 						}
 
 					case Number:
-						// ;_;
-						if (FlxG.keys.justPressed.LEFT)		curWidget.data.get("leftAdjust").press();
-						else if (!FlxG.keys.pressed.LEFT)	curWidget.data.get("leftAdjust").release();
+						// ;_;	
+						var data = curWidget.data;
 
-						if (FlxG.keys.justPressed.RIGHT)	curWidget.data.get("rightAdjust").press();
-						else if (!FlxG.keys.pressed.RIGHT)	curWidget.data.get("rightAdjust").release();
+						if (FlxG.keys.justPressed.LEFT)	{
+							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("min"), true);
+							else							data.get("leftAdjust").press();
+						}
+						else if (FlxG.keys.justReleased.LEFT) {
+							data.get("leftAdjust").release();
+						}		
+
+						if (FlxG.keys.justPressed.RIGHT) {
+							if (FlxG.keys.pressed.SHIFT)	changeNumber(optionName, data.get("max"), true);
+							else							data.get("rightAdjust").press();
+						}
+						else if (FlxG.keys.justReleased.RIGHT) {
+							data.get("rightAdjust").release();
+						}
+
+						if (FlxG.keys.justPressed.R){
+							@:privateAccess
+							var defaultDefinition = ClientPrefs.defaultOptionDefinitions.get(optionName);
+							var defaultValue = defaultDefinition.value;
+
+							if (defaultDefinition.data.get("type") == "percent")
+								defaultValue *= 100;
+
+							changeNumber(optionName, defaultValue, true);
+							doUpdate = true;
+						}
+						if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT || FlxG.mouse.pressed){
+							doUpdate = true;
+						}
 
 					case Dropdown:
 						var change = 0;
@@ -1323,13 +1385,22 @@ class OptionsSubstate extends MusicBeatSubstate
 						if (FlxG.keys.justPressed.RIGHT) change++;
 
 						if (change != 0){
-							var optionName = curWidget.optionData.data.get("optionName");
 							var sowy = actualOptions.get(optionName);
 							var allOptions:Array<String> = sowy.data.get("options");
 							var idx = FlxMath.wrap(allOptions.indexOf(sowy.value) + change, 0, allOptions.length-1);
 
 							changeDropdown(optionName, allOptions[idx]);
+
+							doUpdate = true;
 						}
+
+						if (FlxG.keys.justPressed.R){
+							@:privateAccess
+							changeDropdown(optionName, ClientPrefs.defaultOptionDefinitions.get(optionName).value);
+							doUpdate = true;
+						}
+
+						doUpdate=true; // necessary because it needs to fade in and out :T
 				}
 			}
 
@@ -1342,23 +1413,31 @@ class OptionsSubstate extends MusicBeatSubstate
 					if (FlxG.mouse.overlaps(buttons[idx], mainCamera))
 					{
 						changeCategory(idx, true);
+						pHov = null;
 						break;
 					}
 				}
 			}
 
-			var pHov = curHovering;
-			for (object => widget in currentWidgets)
+			var movedMouse = FlxG.mouse.justMoved || FlxG.mouse.wheel != 0;
+			if (pHov == null || doUpdate || movedMouse || FlxG.mouse.justPressed)
 			{
-				if (overlaps(widget.data.get("optionBox")))
-					curHovering = widget;
+				for (object => widget in currentWidgets)
+				{
+					if (movedMouse && widget != pHov && overlaps(widget.data.get("optionBox")))
+					{
+						movedMouse = false;
+						changeWidget(null); // to reset keyboard selection
+						curWidget = widget;
+					}
 
-				updateWidget(object, widget, elapsed);
+					updateWidget(object, widget, elapsed);
+				}
 			}
 
-			if (curHovering != pHov && curHovering != null)
+			if (curWidget != null && pHov != curWidget)
 			{
-				var hovering = curHovering.optionData;
+				var hovering = curWidget.optionData;
 				optionDesc.text = hovering.desc;
 				if (!optState){
 					var oN = hovering.data.get("optionName");
@@ -1377,7 +1456,7 @@ class OptionsSubstate extends MusicBeatSubstate
 				else
 					optionDesc.fieldWidth = 0;
 				
-				var goalY = FlxG.height - optionDesc.height - 44;
+				var goalY = ((optionCamera.y + optionCamera.height) + (FlxG.height - optionDesc.height)) / 2;
 				optionDesc.screenCenter(X);
 				optionDesc.y = goalY - 12;
 				optionDesc.alpha = 0;
@@ -1424,7 +1503,6 @@ class OptionsSubstate extends MusicBeatSubstate
                 save();
 				FlxG.sound.play(Paths.sound('cancelMenu'));
             
-
                 if(goBack!=null)
 					goBack(changed);
 			}
@@ -1433,8 +1511,11 @@ class OptionsSubstate extends MusicBeatSubstate
 
 	override function destroy()
 	{
+		_point.put();
+		_mousePoint.put();
+
 		for (val in cameraPositions)
-			val.putWeak();
+			val.put();
 
 		super.destroy();
 	}

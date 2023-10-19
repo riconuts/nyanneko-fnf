@@ -14,7 +14,6 @@ import flixel.*;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -928,9 +927,9 @@ class FunkinLua extends FunkinScript
 				var charType:Int = 0;
 				switch (type.toLowerCase())
 				{
-					case 'gf' | 'girlfriend' | '1':
+					case 'gf' | 'girlfriend' | '2':
 						charType = 2;
-					case 'dad' | 'opponent' | '0':
+					case 'dad' | 'opponent' | '1':
 						charType = 1;
 					default:
 						charType = Std.parseInt(type);
@@ -960,8 +959,9 @@ class FunkinLua extends FunkinScript
 			//trace('Triggered event: ' + name + ', ' + value1 + ', ' + value2);
 		});
 
-		addCallback("startCountdown", function(variable:String) {
+		addCallback("startCountdown", function(){
 			PlayState.instance.startCountdown();
+			return true;
 		});
 		addCallback("endSong", function() {
 			PlayState.instance.KillNotes();
@@ -2411,11 +2411,6 @@ class FunkinLua extends FunkinScript
 		#end
 	}
 
-	override public function scriptTrace(text:String)
-	{
-		luaTrace(text);
-	}
-
 	/*public function call(event:String, args:Array<Dynamic>):Dynamic {
 		#if LUA_ALLOWED
 		if(lua == null) {
@@ -2628,6 +2623,7 @@ class ModchartSprite extends FlxSprite
 	public function new(?x:Float = 0, ?y:Float = 0)
 	{
 		super(x, y);
+		//antialiasing = ClientPrefs.globalAntialiasing;
 	}
 }
 
@@ -2637,7 +2633,7 @@ class ModchartText extends FlxText
 	public function new(x:Float, y:Float, text:String, width:Float)
 	{
 		super(x, y, width, text, 16);
-		setFormat(Paths.font("segoepr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		cameras = [PlayState.instance.camHUD];
 		scrollFactor.set();
 		borderSize = 2;
@@ -2651,7 +2647,7 @@ class DebugLuaText extends FlxText
 	public function new(text:String, parentGroup:FlxTypedGroup<DebugLuaText>) {
 		this.parentGroup = parentGroup;
 		super(10, 10, 0, text, 16);
-		setFormat(Paths.font("segoepr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scrollFactor.set();
 		borderSize = 1;
 	}

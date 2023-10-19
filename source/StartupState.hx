@@ -1,4 +1,3 @@
-import OldMainMenuState.MainMenuButton;
 import openfl.events.KeyboardEvent;
 import sys.FileSystem;
 import Github.Release;

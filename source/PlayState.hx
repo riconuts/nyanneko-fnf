@@ -24,7 +24,6 @@ import Section.SwagSection;
 import Shaders;
 import Song.SwagSong;
 import Stage;
-import WiggleEffect.WiggleEffectType;
 import animateatlas.AtlasFrameMaker;
 import editors.*;
 import flixel.*;
@@ -242,8 +241,7 @@ class PlayState extends MusicBeatState
 	public var showCombo:Bool = false;
 	public var showComboNum:Bool = true;
 	
-	public var ratingTxtGroup = new FlxTypedGroup<RatingSprite>();
-	public var comboNumGroup = new FlxTypedGroup<RatingSprite>();
+	public var ratingGroup = new FlxTypedGroup<RatingSprite>();
 	public var timingTxt:FlxText;
 
 	public var displayedHealth(default, set):Float;
@@ -884,10 +882,11 @@ class PlayState extends MusicBeatState
 		add(hud);
 
 		//
-		lastJudge = RatingSprite.newRating();
-		ratingTxtGroup.add(lastJudge).kill();
+		lastJudge = new RatingSprite();
+		lastJudge.scale.set(0.7, 0.7);
+		ratingGroup.add(lastJudge).kill();
 		for (i in 0...3)
-			comboNumGroup.add(RatingSprite.newNumber()).kill();
+			ratingGroup.add(new RatingSprite()).kill();
 		
 		timingTxt = new FlxText();
 		timingTxt.setFormat(Paths.font("segoepr.ttf"), 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -998,21 +997,11 @@ class PlayState extends MusicBeatState
 		////
 		callOnAllScripts('onCreatePost');
 
-		if(ClientPrefs.judgeBehind){
-			add(ratingTxtGroup);
-			add(comboNumGroup);
-			add(timingTxt);
-		}
+		add(ratingGroup);
+		add(timingTxt);
 		add(strumLineNotes);
 		add(playfields);
 		add(notefields);
-		if (!ClientPrefs.judgeBehind)
-		{
-			add(ratingTxtGroup);
-			add(comboNumGroup);
-			add(timingTxt);
-		}
-		add(botplayTxt);
 		add(grpNoteSplashes);
 
 		#if LUA_ALLOWED
@@ -2140,19 +2129,6 @@ class PlayState extends MusicBeatState
 
 		if (!ClientPrefs.coloredCombos)
 			comboColor = 0xFFFFFFFF;
-
-		remove(ratingTxtGroup);
-		remove(comboNumGroup);
-		remove(timingTxt);
-		if(ClientPrefs.judgeBehind){
-			insert(members.indexOf(strumLineNotes) - 1, timingTxt);
-			insert(members.indexOf(timingTxt) - 1, comboNumGroup);
-			insert(members.indexOf(comboNumGroup) - 1, ratingTxtGroup);
-		}else{
-			insert(members.indexOf(notefields) + 1, timingTxt);
-			insert(members.indexOf(timingTxt) + 1, comboNumGroup);
-			insert(members.indexOf(comboNumGroup) + 1, ratingTxtGroup);
-		}
 
 		botplayTxt.y = (ClientPrefs.downScroll ? FlxG.height - 44 : 19) + 15 + (ClientPrefs.downScroll ? -78 : 55);
 		
@@ -3382,9 +3358,6 @@ class PlayState extends MusicBeatState
 	var msTotal = 0.0;
 
 	private function displayJudgment(image:String){
-		var graphic = Paths.image(image);
-		if (graphic == null) return;
-
 		var rating:RatingSprite;
 		var time = (Conductor.stepCrochet * 0.001);
 
@@ -3422,7 +3395,9 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			rating = ratingTxtGroup.recycle(RatingSprite, RatingSprite.newRating);
+			rating = ratingGroup.recycle(RatingSprite);
+			rating.scale.set(0.7, 0.7);
+
 			rating.moves = true;
 			rating.acceleration.y = 550;
 			rating.velocity.set(FlxG.random.int(-10, 10), -FlxG.random.int(140, 175));
@@ -3437,30 +3412,33 @@ class PlayState extends MusicBeatState
 				}
 			});
 		}
+        if (callOnScripts("onDisplayJudgment", [rating, image]) == Globals.Function_Stop)
+			return;
 
+
+		rating.color = 0xFFFFFFFF;
 		rating.alpha = ClientPrefs.judgeOpacity;
 
 		rating.visible = showRating;
-		rating.loadGraphic(graphic);
+		rating.loadGraphic(Paths.image(image));
 		rating.updateHitbox();
 
 		rating.screenCenter();
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
-		ratingTxtGroup.remove(rating, true);
-		ratingTxtGroup.add(rating);
+		ratingGroup.remove(rating, true);
+		ratingGroup.add(rating);
 	}
 	var comboColor = 0xFFFFFFFF;
 
 	private function displayCombo(?combo:Int){
-		if(combo==null)combo=stats.combo;
+		if (combo==null) combo = stats.combo;
 		if (ClientPrefs.simpleJudge)
 		{
 			for (prevCombo in lastCombos)
-			{
 				prevCombo.kill();
-			}
+			
 			if (combo == 0)
 				return;
 		}
@@ -3471,7 +3449,7 @@ class PlayState extends MusicBeatState
 		while (separatedScore.length < 3)
 			separatedScore.unshift("0");
 		if(combo < 0)
-			separatedScore.unshift("-");
+			separatedScore.unshift("neg");
 
 		var daLoop:Int = 0;
 
@@ -3480,8 +3458,9 @@ class PlayState extends MusicBeatState
 		var numStartX:Float = (FlxG.width - separatedScore.length * 41) * 0.5 + ClientPrefs.comboOffset[2];
 		for (i in separatedScore)
 		{
-			var numScore:RatingSprite = comboNumGroup.recycle(RatingSprite, RatingSprite.newNumber);
-			numScore.loadGraphic(Paths.image('num' + (i == "-" ? "neg" : i)));
+			var numScore:RatingSprite = ratingGroup.recycle(RatingSprite);
+			numScore.loadGraphic(Paths.image('num' + i));
+			numScore.scale.set(0.5, 0.5);
 
 			if (ClientPrefs.simpleJudge){
 				numScore.scale.x = 0.5 * 1.25;
@@ -3505,8 +3484,8 @@ class PlayState extends MusicBeatState
 				numScore.tween.destroy();
 			}
 
-			comboNumGroup.remove(numScore, true);
-			comboNumGroup.add(numScore);
+			ratingGroup.remove(numScore, true);
+			ratingGroup.add(numScore);
 
 			numScore.alpha = ClientPrefs.judgeOpacity;
 			if (ClientPrefs.simpleJudge)
@@ -4898,6 +4877,7 @@ class FNFHealthBar extends SowyBar{
 	}
 }
 
+
 class RatingSprite extends FlxSprite
 {
 	public var tween:FlxTween;
@@ -4906,6 +4886,7 @@ class RatingSprite extends FlxSprite
 		super();
 		moves = !ClientPrefs.simpleJudge;
 
+		//antialiasing = ClientPrefs.globalAntialiasing;
 		//cameras = [ClientPrefs.simpleJudge ? PlayState.instance.camHUD : PlayState.instance.camGame];
 		cameras = [PlayState.instance.camHUD];
 
@@ -4918,23 +4899,6 @@ class RatingSprite extends FlxSprite
 			tween.destroy();
 		}
 		return super.kill();
-	}
-
-	public static function newRating()
-	{
-		var rating = new RatingSprite();
-		// rating.acceleration.y = 550;
-		rating.scale.set(0.7, 0.7);
-
-		return rating;
-	}
-
-	public static function newNumber()
-	{
-		var numScore = new RatingSprite();
-		numScore.scale.set(0.5, 0.5);
-
-		return numScore;
 	}
 }
 

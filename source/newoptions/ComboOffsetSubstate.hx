@@ -49,7 +49,8 @@ class ComboOffsetSubstate extends MusicBeatSubstate
         }
             
         
-        rating = RatingSprite.newRating();
+        rating = new RatingSprite();
+        rating.scale.set(0.7, 0.7);
         rating.scrollFactor.set();
         rating.cameras = [camHUD];
         rating.loadGraphic(Paths.image(ratingName));
@@ -63,8 +64,9 @@ class ComboOffsetSubstate extends MusicBeatSubstate
         while (splitCombo.length < 3) splitCombo.unshift("0");
         
         for (number in splitCombo){
-            var num = RatingSprite.newNumber();
+            var num = new RatingSprite();
             num.loadGraphic(Paths.image('num$number'));
+            num.scale.set(0.5, 0.5);
             num.scrollFactor.set();
             num.color = comboColor;
             num.cameras = [camHUD];
@@ -75,7 +77,7 @@ class ComboOffsetSubstate extends MusicBeatSubstate
 
 
         timing = new FlxText(0, 0, 0, "0 ms");
-		timing.setFormat(Paths.font("segoepr.ttf"), 28, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
+		timing.setFormat(Paths.font("calibri.ttf"), 28, 0xFFFFFFFF, CENTER, FlxTextBorderStyle.OUTLINE, 0xFF000000);
         timing.color = ratingColor;
         timing.scrollFactor.set();
 		timing.borderSize = 1.25;
@@ -93,7 +95,7 @@ class ComboOffsetSubstate extends MusicBeatSubstate
 				24
 			);
 			text.scrollFactor.set();
-			text.setFormat(Paths.font("segoepr.ttf"), 24, 0xFFFFFFFF, LEFT, FlxTextBorderStyle.OUTLINE, 0xFF000000);
+			text.setFormat(Paths.font("calibri.ttf"), 24, 0xFFFFFFFF, LEFT, FlxTextBorderStyle.OUTLINE, 0xFF000000);
 			text.borderSize = 1.5;
 			text.cameras = [camHUD];
             add(text);

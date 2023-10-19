@@ -6,6 +6,7 @@ import editors.ChartingState;
 import math.Vector3;
 import scripts.*;
 import playfields.*;
+import shaders.ColorSwap;
 
 using StringTools;
 
@@ -75,7 +76,6 @@ class Note extends NoteObject
 	public var quant:Int = 4;
 	public var extraData:Map<String, Dynamic> = [];
 	public var isQuant:Bool = false; // mainly for color swapping, so it changes color depending on which set (quants or regular notes)
-	public var canQuant:Bool = true;
 	
 	// basic stuff
 	public var beat:Float = 0;
@@ -92,18 +92,23 @@ class Note extends NoteObject
 	public var prevNote:Note;
 	public var nextNote:Note;
 	public var spawned:Bool = false;
+	public var causedMiss:Bool = false;
 	function get_canBeHit()return PlayState.instance.judgeManager.judgeNote(this)!=UNJUDGED;
 	
 	
 	// note type/customizable shit
 	
+	public var canQuant:Bool = true; // whether a quant texture should be searched for or not
 	public var noteType(default, set):String = null;  // the note type
-	public var causedMiss:Bool = false;
 	public var usesDefaultColours:Bool = true; // whether this note uses the default note colours (lets you change colours in options menu)
+	// This automatically gets set if a notetype changes the ColorSwap values
+
+	public var requiresTap:Bool = true; // If you need to tap the note to hit it, or just have the direction be held when it can be judged to hit.
+										// An example is Stepmania mines
 
 	public var blockHit:Bool = false; // whether you can hit this note or not
 	#if PE_MOD_COMPATIBILITY
-	public var lowPriority:Bool = false; // Unused. shadowmario's shitty workaround for really bad mine placement, yet still no *real* hitbox customization lol!
+	public var lowPriority:Bool = false; // Shadowmario's shitty workaround for really bad mine placement, yet still no *real* hitbox customization lol! Only used when PE Mod Compat is enabled in project.xml
 	#end
 	@:isVar
 	public var noteSplashDisabled(get, set):Bool = false; // disables the notesplash when you hit this note
@@ -133,9 +138,6 @@ class Note extends NoteObject
 	// Leave -1 if it should be automatically determined based on mustPress and placed into either bf or dad's based on that.
 	// Note that holds automatically have this set to their parent's fieldIndex
 	public var field:PlayField; // same as fieldIndex but lets you set the field directly incase you wanna do that i  guess
-
-	// custom health values
-	public var ratingHealth:Map<String, Float> = [];
 
 	// hold/roll shit
 	public var sustainMult:Float = 1;
@@ -180,9 +182,10 @@ class Note extends NoteObject
 	public var typeOffsetY:Float = 0;
 	public var typeOffsetAngle:Float = 0;
 	public var multSpeed(default, set):Float = 1;
-	// useless shit mostly
+	/* useless shit mostly
 	public var offsetAngle:Float = 0;
 	public var multAlpha:Float = 1;
+	*/
 
 	public var copyX:Bool = true;
 	public var copyY:Bool = true;
@@ -201,16 +204,14 @@ class Note extends NoteObject
 		''
 	];
 
+	public var isSustainEnd:Bool = false;
+	/*
 	@:isVar
 	public var isSustainEnd(get, null):Bool = false;
 
 	public function get_isSustainEnd():Bool
-	{
-		if (isSustainNote && animation != null && animation.curAnim != null && animation.curAnim.name != null && animation.curAnim.name.endsWith("end"))
-			return true;
-
-		return false;
-	}
+		return (isSustainNote && animation != null && animation.curAnim != null && animation.curAnim.name != null && animation.curAnim.name.endsWith("end"));
+	*/
 
 	private function set_multSpeed(value:Float):Float {
 		return multSpeed = value;
@@ -251,7 +252,7 @@ class Note extends NoteObject
 	}
 
 	private function set_noteType(value:String):String {
-		noteSplashTexture = PlayState.SONG.splashSkin;
+		noteSplashTexture = PlayState.splashSkin;
 
 		updateColours();
 
@@ -356,8 +357,10 @@ class Note extends NoteObject
 		}
 		beat = Conductor.getBeat(strumTime);
 
-		//x += PlayState.STRUM_X + 50;
+		/*
+		x += PlayState.STRUM_X + 50;
 		y -= 2000; // MAKE SURE ITS DEFINITELY OFF SCREEN?
+		*/
 		
 		if(!inEditor){ 
 			this.strumTime += ClientPrefs.noteOffset;
@@ -369,7 +372,7 @@ class Note extends NoteObject
 			colorSwap = new ColorSwap();
 			shader = colorSwap.shader;
 
-			x += swagWidth * (noteData);
+			// x += swagWidth * (noteData);
 			if(!isSustainNote && noteData > -1 && noteData < 4) { //Doing this 'if' check to fix the warnings on Senpai songs
 				var animToPlay:String = '';
 				animToPlay = colArray[noteData % 4];
@@ -384,7 +387,7 @@ class Note extends NoteObject
 		{
 			sustainMult = 0.5; // early hit mult but just so note-types can set their own and not have sustains fuck them
 			alpha = 0.6;
-			multAlpha = 0.6;
+			//multAlpha = 0.6;
 			hitsoundDisabled = true;
 			copyAngle = false;
 			//if(ClientPrefs.downScroll) flipY = true;
@@ -439,7 +442,11 @@ class Note extends NoteObject
 
 		var skin:String = texture;
 		if (texture.length < 1)
+		{
 			skin = PlayState.arrowSkin;
+			if (skin == null || skin.length < 1)
+				skin = 'NOTE_assets';
+		}
 
 		var arraySkin:Array<String> = skin.split('/');
 		arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length-1] + suffix; // add prefix and suffix to the texture file
@@ -459,7 +466,7 @@ class Note extends NoteObject
 		{
 			if (canQuant && ClientPrefs.noteSkin == 'Quants')
 			{
-				var texture = quantShitCache.get(dir + blahblah); // did i do this right, is this the right thing to do
+				var texture = quantShitCache.get(dir + blahblah);
 
 				if (texture != null){
 					blahblah = texture;

@@ -186,9 +186,10 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 	public function queue(note:Note){
 		if(noteQueue[note.noteData]==null)
 			noteQueue[note.noteData] = [];
+		noteQueue[note.noteData].push(note);
+
 		noteQueue[note.noteData].sort((a, b) -> Std.int(a.strumTime - b.strumTime));
 		
-		noteQueue[note.noteData].push(note);
 	}
 
 	// unqueues a note
@@ -196,8 +197,8 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 	{
 		if (noteQueue[note.noteData] == null)
 			noteQueue[note.noteData] = [];
-		noteQueue[note.noteData].sort((a, b) -> Std.int(a.strumTime - b.strumTime));
 		noteQueue[note.noteData].remove(note);
+		noteQueue[note.noteData].sort((a, b) -> Std.int(a.strumTime - b.strumTime));
 	}
 
 	// destroys a note
@@ -234,6 +235,9 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 
 	// spawns a note
 	public function spawnNote(note:Note){
+		if(note.spawned)
+			return;
+		
 		if (noteQueue[note.noteData]!=null){
 			noteQueue[note.noteData].remove(note);
 			noteQueue[note.noteData].sort((a, b) -> Std.int(a.strumTime - b.strumTime));
@@ -288,12 +292,14 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 		while (noteList.length > 0)
 		{
 			var note:Note = noteList.shift();
-			var judge:Judgment = judgeManager.judgeNote(note);
-			if (judge != UNJUDGED){
-				note.hitResult.judgment = judge;
-				note.hitResult.hitDiff = note.strumTime - Conductor.songPosition;
-				noteHitCallback(note, this);
-				return note;
+			if(note.requiresTap){
+				var judge:Judgment = judgeManager.judgeNote(note);
+				if (judge != UNJUDGED){
+					note.hitResult.judgment = judge;
+					note.hitResult.hitDiff = note.strumTime - Conductor.songPosition;
+					noteHitCallback(note, this);
+					return note;
+				}
 			}
 		}
 		return null;
@@ -326,7 +332,7 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 				babyArrow.alpha = 0;
 				var daY = babyArrow.downScroll ? -10 : 10;
 				babyArrow.offsetY -= daY;
-				FlxTween.tween(babyArrow, {offsetY: babyArrow.offsetY + daY, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * data)});
+				FlxTween.tween(babyArrow, {offsetY: babyArrow.offsetY + daY, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (Conductor.crochet / 1000) * data});
 			}
 		}
 	}
@@ -365,7 +371,7 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 		noteField.modNumber = modNumber;
 		noteField.cameras = cameras;
 
-		for(char in characters)
+		for (char in characters)
 			char.controlled = isPlayer;
 		
 		var curDecStep:Float = 0;
@@ -423,18 +429,20 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 						var isHeld = autoPlayed || keysPressed[daNote.noteData];
 						//if(daNote.isRoll)isHeld = false; // roll logic is done on press
 						// TODO: write that logic tho
-						var receptor = strumNotes[daNote.noteData];
-						
-						// should i do this??? idfk lol
-						if(isHeld && receptor.animation.curAnim.name!="confirm")
-							receptor.playAnim("confirm", true);
+						var receptor = strumNotes[daNote.noteData];							
 
 						daNote.holdingTime = Conductor.songPosition - daNote.strumTime;
-						var regrabTime = (daNote.isRoll?0.5:0.25) * judgeManager.judgeTimescale;
-						if(isHeld)
+						
+						if(isHeld){
+							// should i do this??? idfk lol
+							if (receptor.animation.finished || receptor.animation.curAnim.name != "confirm") 
+								receptor.playAnim("confirm", true);
+							
 							daNote.tripTimer = 1;
-						else
+						}else{
+							var regrabTime = (daNote.isRoll ? 0.5 : 0.25) * judgeManager.judgeTimescale;
 							daNote.tripTimer -= elapsed / regrabTime; // NOTDO: regrab time multiplier in options
+						}
 						// RE: nvm its done by the judge diff instead
 
 						if(daNote.tripTimer <= 0){
@@ -504,16 +512,40 @@ class PlayField extends FlxTypedGroup<FlxBasic>
 					if (!daNote.isSustainNote){
 						var hitDiff = Conductor.songPosition - daNote.strumTime;
 						if (isPlayer && (hitDiff + ClientPrefs.ratingOffset) >= (-5 * (Wife3.timeScale > 1?1:Wife3.timeScale)) || hitDiff >= 0){
-							daNote.hitResult.judgment = /*judgeManager.useEpics ? TIER5 : */TIER4; // NO EPICSSS
+							daNote.hitResult.judgment = judgeManager.useEpics ? TIER5 : TIER4;
 							daNote.hitResult.hitDiff = (hitDiff > -5) ? -5 : hitDiff; 
 							if (noteHitCallback!=null)noteHitCallback(daNote, this);
 						}
 					}
-					
+				}
+			}
+		}else{
+			for(data in 0...keyCount){
+				if (keysPressed[data]){
+					var noteList = getNotesWithEnd(data, Conductor.songPosition + ClientPrefs.hitWindow, (note:Note) -> !note.isSustainNote);
+					#if PE_MOD_COMPATIBILITY
+					noteList.sort((a, b) -> Std.int((a.strumTime + (a.lowPriority ? 10000 : 0)) - (b.strumTime + (b.lowPriority ? 10000 : 0)))); // so lowPriority actually works (even though i hate it lol!)
+					#else
+					noteList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+					#end
+					while (noteList.length > 0)
+					{
+						var note:Note = noteList.shift();
+						if(!note.requiresTap){
+							var judge:Judgment = judgeManager.judgeNote(note);
+							if (judge != UNJUDGED)
+							{
+								note.hitResult.judgment = judge;
+								note.hitResult.hitDiff = note.strumTime - Conductor.songPosition;
+								noteHitCallback(note, this);
+							}
+						}
+					}
 				}
 			}
 		}
 	}
+	
 
 	// gets all living notes w/ optional filter
 

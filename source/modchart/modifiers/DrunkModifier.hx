@@ -26,10 +26,9 @@ class DrunkModifier extends NoteModifier {
 
 	inline function applyTipsy(axis:String, player:Int, time:Float, visualDiff:Float, data:Float)
 	{
-        var tipsy = axis == 'Z' ? 'tip' : 'tipsy';
-        var perc = getSubmodValue('${tipsy}${axis}', player);
-		var speed = getSubmodValue('${tipsy}${axis}Speed', player);
-		var offset = getSubmodValue('${tipsy}${axis}Offset', player);
+        var perc = getSubmodValue('tipsy${axis}', player);
+		var speed = getSubmodValue('tipsy${axis}Speed', player);
+		var offset = getSubmodValue('tipsy${axis}Offset', player);
 
 		if (perc != 0)
 		    return perc * (FlxMath.fastCos((time * ((speed * 1.2) + 1.2) + data * ((offset * 1.8) + 1.8))) * Note.swagWidth * .4);
@@ -41,8 +40,8 @@ class DrunkModifier extends NoteModifier {
         var perc = getSubmodValue('bumpy${axis}', player);
 		var period = getSubmodValue('bumpy${axis}Period', player);
 		var offset = getSubmodValue('bumpy${axis}Offset', player);
-		if (perc!=0){
-            var angle = (visualDiff + (100.0 * offset)) / ((period * 16.0) + 16.0);
+		if (perc != 0 && period != -1){
+            var angle = (visualDiff + (100.0 * offset)) / ((period * 24.0) + 24.0);
 		    return (perc * 40 * FlxMath.fastSin(angle));
         }
         return 0;
@@ -67,6 +66,14 @@ class DrunkModifier extends NoteModifier {
         return pos;
     }
 
+    override function getAliases(){
+        return [
+            "tipZ" => "tipsyZ",
+            "tipZSpeed" => "tipsyZSpeed",
+            "tipZOffset" => "tipsyZOffset"
+        ];
+    }
+
     override function getSubmods(){
         return [
             // Z
@@ -74,9 +81,9 @@ class DrunkModifier extends NoteModifier {
             "bumpyOffset",
             "bumpyPeriod",
 
-			"tipZ",
-			"tipZSpeed",
-			"tipZOffset",
+			"tipsyZ",
+			"tipsyZSpeed",
+			"tipsyZOffset", 
 
 			"drunkZ",
 			"drunkZSpeed",
@@ -108,8 +115,6 @@ class DrunkModifier extends NoteModifier {
 			"drunkSpeed",
 			"drunkOffset",
 			"drunkPeriod"
-
-
         ];
     }
 
