@@ -427,7 +427,7 @@ class ClientPrefs
 			},
 			"sickWindow" => {
 				display: "Sick Window",
-				desc: "The hit window to hit an Sick judgement.",
+				desc: "The hit window to hit a Sick judgement.",
 				type: Number,
 				value: 45,
 				data: ["suffix" => "ms", "min" => 0, "max" => 200, "step" => 0.1]

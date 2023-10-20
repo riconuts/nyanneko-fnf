@@ -1455,6 +1455,11 @@ class OptionsSubstate extends MusicBeatSubstate
 					optionDesc.fieldWidth = maxWidth;
 				else
 					optionDesc.fieldWidth = 0;
+
+				optionDesc.drawFrame(true);
+				var optionsTail = Std.int(optionCamera.y + optionCamera.height) + 2;
+				optionDesc.setGraphicSize(0, FlxMath.minInt(FlxG.height - optionsTail, optionDesc.frameHeight) - 4);
+				optionDesc.updateHitbox();
 				
 				var goalY = ((optionCamera.y + optionCamera.height) + (FlxG.height - optionDesc.height)) / 2;
 				optionDesc.screenCenter(X);

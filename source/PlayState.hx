@@ -2846,9 +2846,12 @@ class PlayState extends MusicBeatState
 		reloadHealthBarColors();
 	}
 
-	public function triggerEventNote(eventName:String = "", value1:String = "", value2:String = "") {
+	public function triggerEventNote(eventName:String = "", value1:String = "", value2:String = "", ?time:Float) {
+        if(time==null)
+            time = Conductor.songPosition;
+
 		if(showDebugTraces)
-			trace('Event: ' + eventName + ', Value 1: ' + value1 + ', Value 2: ' + value2 + ', at Time: ' + Conductor.songPosition);
+			trace('Event: ' + eventName + ', Value 1: ' + value1 + ', Value 2: ' + value2 + ', at Time: ' + time);
 
 		switch(eventName) {
 			case 'Change Focus':
@@ -2911,9 +2914,7 @@ class PlayState extends MusicBeatState
 					if(Math.isNaN(camZoom)) camZoom = 0.015;
 					if(Math.isNaN(hudZoom)) hudZoom = 0.03;
 
-					if(FlxG.camera.zoom < (defaultCamZoom * 1.35))
-						FlxG.camera.zoom += camZoom * ClientPrefs.camZoomP;
-					camHUD.zoom += hudZoom * ClientPrefs.camZoomP;
+					cameraBump(camZoom, hudZoom);
 				}
 			case 'Play Animation':
 				//trace('Anim to play: ' + value1);
@@ -3072,11 +3073,10 @@ class PlayState extends MusicBeatState
 
 			case 'Set Property':
 				var value2:Dynamic = value2;
+
 				switch (value2){
-					case "true":
-						value2 = true;
-					case "false":
-						value2 = false;
+					case "true": value2 = true;
+					case "false": value2 = false;
 				}
 
 				var killMe:Array<String> = value1.split('.');
@@ -3089,15 +3089,11 @@ class PlayState extends MusicBeatState
 
 				}
 		}
-		callOnScripts('onEvent', [eventName, value1, value2]);
+		callOnScripts('onEvent', [eventName, value1, value2, time]);
 		if(eventScripts.exists(eventName)){
 			var script = eventScripts.get(eventName);
-			#if LUA_ALLOWED
-			if(script is FunkinLua)
-				callScript(script, "onEvent", [eventName, value1, value2]);
-			else
-			#end
-				callScript(script, "onTrigger", [value1, value2]);
+
+			callScript(script, "onTrigger", [value1, value2, time]);
 		}
 	}
 
@@ -4398,11 +4394,11 @@ class PlayState extends MusicBeatState
 		callOnScripts('onStepHit');
 	}
 
-	public function cameraBump()
+	public function cameraBump(camZoom:Float = 0.015, hudZoom:Float = 0.03)
 	{
 		if(FlxG.camera.zoom < (defaultCamZoom * 1.35))
-			FlxG.camera.zoom += 0.015 * camZoomingMult * ClientPrefs.camZoomP;
-		camHUD.zoom += 0.03 * camZoomingMult * ClientPrefs.camZoomP;
+			FlxG.camera.zoom += camZoom * camZoomingMult * ClientPrefs.camZoomP;
+		camHUD.zoom += hudZoom * camZoomingMult * ClientPrefs.camZoomP;
 	}
 
 	public var zoomEveryBeat:Int = 4;
