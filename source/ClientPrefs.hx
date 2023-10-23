@@ -46,7 +46,7 @@ class ClientPrefs
 				display: "Controller Mode",
 				desc: "When toggled, lets you play the game with a controller instead.",
 				type: Toggle,
-				value: true,
+				value: false,
 				data: []
 			},
 			"ghostTapping" => {
@@ -121,7 +121,7 @@ class ClientPrefs
 				display: "Miss Volume",
 				desc: "The volume of miss sounds.",
 				type: Number,
-				value: 20,
+				value: 1,
 				data: [
 					"suffix" => "%",
 					"min" => 0,
@@ -206,15 +206,6 @@ class ClientPrefs
 					"type" => "percent"
 				]
 			},
-			/*
-			"judgeBehind" => {
-				display: "Judgements Behind Notes",
-				desc: "Places judgements behind the notes instead of infront.",
-				type: Toggle,
-				value: false,
-				data: []
-			},
-			*/
 			"hpOpacity" => {
 				display: "Health Bar Opacity",
 				desc: "How visible the health bar should be. 100% is fully visible and 0% is invisible.",
@@ -420,7 +411,7 @@ class ClientPrefs
 			// judgement-related (gameplay)
 			"epicWindow" => {
 				display: "Epic Window",
-				desc: "The hit window to hit a Epic judgement.",
+				desc: "The hit window to hit an Epic judgement.",
 				type: Number,
 				value: 22,
 				data: ["suffix" => "ms", "min" => 0, "max" => 200, "step" => 0.1]
@@ -647,8 +638,10 @@ class ClientPrefs
 
 	static var manualLoads = ["gameplaySettings", "quantHSV", "arrowHSV", "comboOffset"];
 
-	public static function initialize()
+	public static function initialize(){
 		optionSave.bind("options_v2");
+		loadDefaultKeys();
+	}
 	
 
 	public static function save(?definitions:Map<String, OptionData>)

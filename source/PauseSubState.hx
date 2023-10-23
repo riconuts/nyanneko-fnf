@@ -250,9 +250,12 @@ class PauseSubState extends MusicBeatSubstate
 				{
 					case 'Change Modifiers':
 						this.persistentDraw = false;						
-						this.openSubState(new GameplayChangersSubstate());						
+						this.openSubState(new GameplayChangersSubstate());	
+						FlxG.sound.play(Paths.sound("confirmMenu"));	
 
 					case 'Options':
+						FlxG.sound.play(Paths.sound("confirmMenu"));
+
 						var daSubstate = new OptionsSubstate();
 						this.persistentDraw = true;
 

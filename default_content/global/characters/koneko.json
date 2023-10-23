@@ -1,0 +1,25 @@
+{
+	"animations": [
+		{
+			"offsets": [0, 0],
+			"loop": false,
+			"anim": "idle",
+			"fps": 24,
+			"name": "kirko",
+			"indices": [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+		}
+	],
+	"no_antialiasing": true,
+	"image": "characters/kiriko",
+	"position": [0, 0],
+	"healthicon": "kiriko",
+	"flip_x": false,
+	"healthbar_colors": [
+		1,
+		67,
+		175
+	],
+	"camera_position": [0, 0],
+	"sing_duration": 4,
+	"scale": 1
+}

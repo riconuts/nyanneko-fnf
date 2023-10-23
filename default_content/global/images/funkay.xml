@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="funky.png">
+	<!-- Created with Adobe Animate version 20.0.3.25487 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="raku0000" x="0" y="0" width="637" height="459"/>
+	<SubTexture name="raku0001" x="0" y="0" width="637" height="459"/>
+	<SubTexture name="raku0002" x="0" y="0" width="637" height="459"/>
+	<SubTexture name="raku0003" x="0" y="0" width="637" height="459"/>
+	<SubTexture name="raku0004" x="0" y="0" width="637" height="459"/>
+	<SubTexture name="raku0005" x="0" y="0" width="637" height="459"/>
+	<SubTexture name="raku0006" x="637" y="0" width="637" height="459"/>
+	<SubTexture name="raku0007" x="637" y="0" width="637" height="459"/>
+	<SubTexture name="raku0008" x="637" y="0" width="637" height="459"/>
+	<SubTexture name="raku0009" x="637" y="0" width="637" height="459"/>
+	<SubTexture name="raku0010" x="637" y="0" width="637" height="459"/>
+	<SubTexture name="raku0011" x="637" y="0" width="637" height="459"/>
+</TextureAtlas>

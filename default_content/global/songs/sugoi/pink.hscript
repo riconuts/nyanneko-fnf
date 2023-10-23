@@ -1,0 +1,141 @@
+var FlxShapeCircle = getClass("flixel.addons.display.shapes.FlxShapeCircle");
+
+var stupidStyle = {
+	thickness: 1,
+	color: 0x00000000
+};
+
+var spriteGroup;
+function makeCircal()
+{
+	var circal = new FlxShapeCircle(0, 0, 100, stupidStyle, 0xFFFBD2FF);
+	circal.scrollFactor.y = 0;
+
+	circal.radius = 360;
+	circal.width = 360 * 2;
+	circal.height = 360 * 2;
+	
+	circal.scale.set();
+	circal.screenCenter();
+	circal.x = game.boyfriend.x + 475 - 360;
+	
+	return circal;
+}
+
+var toRad = 3.14/180;
+var dur = 60/(130*0.75)/4*6;
+function circleAnim(circal, ?delay)
+{
+	var angle = (360 / 6) * circal.ID;
+	var radAngle = angle * toRad;
+	
+	var x = circal.x + (FlxG.width / 1.9) * FlxMath.fastCos(radAngle);
+	var y = circal.y + (FlxG.height / 1.9) * FlxMath.fastSin(radAngle);
+	
+	var twnTag = "circleNyaTween"+circal.ID;
+
+	var twn = FlxTween.tween(
+		circal, 
+		{
+			"scale.x": 0.4, 
+			"scale.y": 0.4, 
+			alpha: 0, 
+			x: x,
+			y: y
+		}, 
+		dur, 
+		{
+			ease: FlxEase.sineIn,
+			type: FlxTween.LOOPING,
+			startDelay: delay,
+			onComplete: (twn)->{
+				if (curStep >= 996){
+					twn.cancel();
+					game.modchartTweens.remove(twnTag);
+				}
+			}
+		}
+	);
+	game.modchartTweens.set(twnTag, twn);
+}
+
+var bgColorSpr;
+var cameraPoint;
+var pinkish;
+
+function onCreatePost()
+{	
+	cameraPoint = FlxPoint.get();
+	cameraPoint.set(game.boyfriend.x + 475, game.sectionCamera.y);
+
+	spriteGroup = new FlxGroup();
+	game.insert(game.members.indexOf(game.boyfriendGroup), spriteGroup);
+
+	bgColorSpr = new FlxSprite().makeGraphic(1,1, 0xFFEE85FF);
+	bgColorSpr.setGraphicSize(1280*2, 720*2);
+	bgColorSpr.updateHitbox();
+	bgColorSpr.screenCenter();
+	bgColorSpr.scrollFactor.set();
+	bgColorSpr.alpha = 0;
+	spriteGroup.add(bgColorSpr);
+	
+	pinkish = new FlxSprite(0, 0, Paths.image("whiteVignette"));
+	pinkish.setGraphicSize(FlxG.width, FlxG.height);
+	pinkish.updateHitbox();
+	pinkish.cameras = [game.camHUD];
+	pinkish.blend = 12; // screen
+	pinkish.alpha = 0;
+	pinkish.color = 0xFFEE85FF;
+	game.add(pinkish);
+	
+	for (i in 0...16){
+		var circal = spriteGroup.add(makeCircal());
+		circal.ID = i;
+	}
+}
+
+function postModifierRegister()
+{
+	modManager.queueFuncOnce(786, (e)->{
+		game.boyfriend.idleSuffix = "-sugoi";
+	});
+	modManager.queueEaseFunc(786, 798, FlxEase.circOut, (e)->{
+		pinkish.alpha = e.progress;
+	});
+	modManager.queueFuncOnce(800, (e)->{
+		game.boyfriend.dance();
+	});
+	modManager.queueEaseFunc(800, 808, FlxEase.circOut, (e)->{
+		pinkish.alpha = 1-e.progress*0.25;
+	});
+	modManager.queueEaseFunc(812, 816, FlxEase.circOut, (e)->{
+		pinkish.alpha = 0.75-e.progress*0.25;
+	});
+
+	modManager.queueFuncOnce(944, (e)->{
+		game.cameraPoints.push(cameraPoint);
+	});
+
+	modManager.queueEaseFunc(952.5, 956, FlxEase.circOut, (e)->{
+		bgColorSpr.alpha = e.progress;
+		pinkish.alpha = 0.5+e.progress*0.5;
+	});
+	
+	modManager.queueEaseFunc(944, 960, FlxEase.circOut, (e)->{
+		game.defaultCamZoom = FlxMath.lerp(1.05, 1.15, e.progress);
+	});
+	
+	modManager.queueFuncOnce(962, (e)->{
+		game.defaultCamZoom = 1;
+		
+		for (spr in spriteGroup)
+		{
+			if (spr != bgColorSpr)
+				circleAnim(spr, 0.1 * spr.ID);
+		}
+	});	
+}
+
+function onDestroy(){
+	cameraPoint.put();
+}

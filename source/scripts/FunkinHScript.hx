@@ -236,6 +236,11 @@ class FunkinHScript extends FunkinScript
         //set("HScriptState", HScriptState);
 		set("HScriptSubstate", HScriptSubstate);
 
+		//// rawr
+		set("FlxShapeCircle", flixel.addons.display.shapes.FlxShapeCircle);
+		
+		////
+
 		if (additionalVars != null){
 			for (key in additionalVars.keys())
 				set(key, additionalVars.get(key));

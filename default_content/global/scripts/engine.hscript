@@ -1,0 +1,40 @@
+function postSetupNoteSplash(x, y, note, texture, hueColor, satColor, brtColor){
+    this.scale.set(2.581406, 2.581406);
+    this.updateHitbox();
+}
+
+/*
+function onCreatePost()
+{
+	for (note in game.allNotes){
+		if (note.isSustainNote)
+			note.scale.set(34/15, 34/15);
+		else if (noteData > 0 && noteData < 3)
+			note.setGraphicSize(134, 112);
+		else
+			note.setGraphicSize(112, 134);	
+			
+		note.updateHitbox();
+	}
+}
+
+function onCountdownStarted(){
+	for (strum in game.playerStrums.members){
+
+		
+		trace(strum.scale, strum.defScale);		
+		strum.defScale.set(strum.scale.x, strum.scale.y);
+		trace(strum.scale, strum.defScale);
+		strum.updateHitbox();
+	}
+	for (strum in game.opponentStrums.members){
+		if (strum.noteData > 0 && strum.noteData < 3)
+			strum.setGraphicSize(134, 112);
+		else
+			strum.setGraphicSize(112, 134);
+			
+		strum.defScale.set(strum.scale.x, strum.scale.y);
+		strum.updateHitbox();
+	}
+}
+*/

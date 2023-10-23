@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="hitoshi.png" width="6304" height="737">
+  <SubTexture name="hitoshi0023" x="0" y="0"  width="557" height="586" frameX="-294" frameY="-178" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0001" x="557" y="0"  width="558" height="589" frameX="-290" frameY="-175" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0025" x="1115" y="0"  width="538" height="606" frameX="-314" frameY="-158" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0015" x="1653" y="0"  width="592" height="607" frameX="-206" frameY="-157" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0017" x="2245" y="0"  width="558" height="614" frameX="-240" frameY="-150" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0004" x="2803" y="0"  width="560" height="625" frameX="-286" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0007" x="3363" y="0"  width="517" height="636" frameX="-327" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0010" x="3880" y="0"  width="510" height="636" frameX="-336" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0039" x="4390" y="0"  width="402" height="652" frameX="-636" frameY="-112" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0041" x="4792" y="0"  width="390" height="657" frameX="-626" frameY="-107" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0033" x="5182" y="0"  width="564" height="724" frameX="-336" frameY="-40" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0031" x="5746" y="0"  width="558" height="737" frameX="-348" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0002" x="557" y="0"  width="558" height="589" frameX="-290" frameY="-175" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0003" x="557" y="0"  width="558" height="589" frameX="-290" frameY="-175" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0005" x="2803" y="0"  width="560" height="625" frameX="-286" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0006" x="2803" y="0"  width="560" height="625" frameX="-286" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0008" x="3363" y="0"  width="517" height="636" frameX="-327" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0009" x="3363" y="0"  width="517" height="636" frameX="-327" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0011" x="3880" y="0"  width="510" height="636" frameX="-336" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0012" x="3880" y="0"  width="510" height="636" frameX="-336" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0013" x="3880" y="0"  width="510" height="636" frameX="-336" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0014" x="3880" y="0"  width="510" height="636" frameX="-336" frameY="-128" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0016" x="1653" y="0"  width="592" height="607" frameX="-206" frameY="-157" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0018" x="2245" y="0"  width="558" height="614" frameX="-240" frameY="-150" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0019" x="2245" y="0"  width="558" height="614" frameX="-240" frameY="-150" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0020" x="2245" y="0"  width="558" height="614" frameX="-240" frameY="-150" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0021" x="2245" y="0"  width="558" height="614" frameX="-240" frameY="-150" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0022" x="2245" y="0"  width="558" height="614" frameX="-240" frameY="-150" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0024" x="0" y="0"  width="557" height="586" frameX="-294" frameY="-178" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0026" x="1115" y="0"  width="538" height="606" frameX="-314" frameY="-158" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0027" x="1115" y="0"  width="538" height="606" frameX="-314" frameY="-158" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0028" x="1115" y="0"  width="538" height="606" frameX="-314" frameY="-158" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0029" x="1115" y="0"  width="538" height="606" frameX="-314" frameY="-158" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0030" x="1115" y="0"  width="538" height="606" frameX="-314" frameY="-158" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0032" x="5746" y="0"  width="558" height="737" frameX="-348" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0034" x="5182" y="0"  width="564" height="724" frameX="-336" frameY="-40" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0035" x="5182" y="0"  width="564" height="724" frameX="-336" frameY="-40" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0036" x="5182" y="0"  width="564" height="724" frameX="-336" frameY="-40" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0037" x="5182" y="0"  width="564" height="724" frameX="-336" frameY="-40" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0038" x="5182" y="0"  width="564" height="724" frameX="-336" frameY="-40" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0040" x="4390" y="0"  width="402" height="652" frameX="-636" frameY="-112" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0042" x="4792" y="0"  width="390" height="657" frameX="-626" frameY="-107" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0043" x="4792" y="0"  width="390" height="657" frameX="-626" frameY="-107" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0044" x="4792" y="0"  width="390" height="657" frameX="-626" frameY="-107" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0045" x="4792" y="0"  width="390" height="657" frameX="-626" frameY="-107" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="hitoshi0046" x="4792" y="0"  width="390" height="657" frameX="-626" frameY="-107" frameWidth="1053" frameHeight="764"/>
+</TextureAtlas>

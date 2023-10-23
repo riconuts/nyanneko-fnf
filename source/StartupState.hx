@@ -199,8 +199,8 @@ class StartupState extends FlxState
 					else
 					#end
 					{
-						FlxTransitionableState.skipNextTransIn = true;
-						FlxTransitionableState.skipNextTransOut = true;
+						FlxTransitionableState.skipNextTransIn = false;
+						FlxTransitionableState.skipNextTransOut = false;
 						MusicBeatState.switchState(Type.createInstance(nextState, []));
 					}	
 				}});

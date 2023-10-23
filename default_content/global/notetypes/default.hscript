@@ -1,0 +1,25 @@
+function loadNoteAnims(note)
+{
+	var col = switch(noteData){
+		case 0: "singLEFT";
+		case 1: "singDOWN";
+		case 2: "singUP";
+		case 3: "singRIGHT";
+	}
+	note.animation.addByPrefix(col + 'Scroll', col + '0');
+
+	if (note.isSustainNote)
+	{
+		note.animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
+		note.animation.addByPrefix(col + 'holdend', col + ' hold end');
+		note.animation.addByPrefix(col + 'hold', col + ' hold piece');
+
+		note.scale.set(34/15, 34/15);
+	}	
+	else if (noteData > 0 && noteData < 3)
+		note.setGraphicSize(134, 112);
+	else
+		note.setGraphicSize(112, 134);
+	
+	note.updateHitbox();
+}

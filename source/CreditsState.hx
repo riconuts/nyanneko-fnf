@@ -1,5 +1,6 @@
 package;
 
+import flixel.group.FlxSpriteGroup;
 import flixel.graphics.FlxGraphic;
 import flixel.*;
 import flixel.math.*;
@@ -22,7 +23,6 @@ class CreditsState extends MusicBeatState
 {	
 	var bg:FlxSprite;
 
-    var hintBg:FlxSprite;
 	var hintText:FlxText;
 
 	var camFollow = new FlxPoint(FlxG.width * 0.5, FlxG.height * 0.5);
@@ -109,6 +109,29 @@ class CreditsState extends MusicBeatState
 		backdrops.x -= 10;
 		add(backdrops);
 
+		var textWidth = Math.ceil(FlxG.width * (720/1280));
+		var artWidth = Math.ceil(FlxG.width * (560/1280));
+
+		var textBg = new FlxSprite().makeGraphic(textWidth, FlxG.height, 0xFF333333);
+		textBg.scrollFactor.set();
+		add(textBg);
+
+		var titleGrp = new FlxSpriteGroup();
+		titleGrp.scrollFactor.set();
+		add(titleGrp);
+
+		var titleBg = new FlxSprite().makeGraphic(textWidth, 100, 0xFF666666);
+		titleGrp.add(titleBg);
+
+		var titleTxt = new FlxText(60, 0, 0, "Mod credits! ^_^", 36);
+		titleTxt.font = Paths.font("segoepr.ttf");
+		titleTxt.color = 0xFFDFDFDF;
+		titleTxt.y = Std.int(titleBg.y + (titleBg.height - titleTxt.height) / 2);
+		titleGrp.add(titleTxt);
+
+		titleGrp.x = FlxG.width - titleGrp.width;
+		titleGrp.y = 80;
+
         ////
         function loadLine(line:String, ?folder:String)
 			addSong(line.split("::"), folder);
@@ -169,19 +192,10 @@ class CreditsState extends MusicBeatState
 		for (i in CoolUtil.listFromString(rawCredits))
 			loadLine(i);
 
-		////
-		hintBg = new FlxSprite(0, FlxG.height - 130).makeGraphic(1, 1);
-		hintBg.scale.set(FlxG.width - 100, 120);
-        hintBg.updateHitbox();
-		hintBg.screenCenter(X);
-		hintBg.color = 0xFF000000;
-		hintBg.alpha = 0.6;
-		hintBg.scrollFactor.set();
-		add(hintBg);
-
-		hintText = new FlxText(hintBg.x + 25, hintBg.y + hintBg.height * 0.5 - 16, hintBg.width - 50, "asfgh", 32);
+		///
+		hintText = new FlxText(0, 0, 0, "asfgh", 32);
 		hintText.setFormat(Paths.font("segoepr.ttf"), 32, 0xFFFFFFFF, CENTER);
-		hintText.scrollFactor.set();
+		//hintText.scrollFactor.set();
         add(hintText);
 		
 		super.create();
@@ -213,7 +227,7 @@ class CreditsState extends MusicBeatState
             var songIcon = new AttachedSprite("credits/" + data[1]);
 
             songIcon.xAdd = songTitle.width + 15; 
-            songIcon.yAdd = 15;
+            //songIcon.yAdd = 15;
             songIcon.sprTracker = songTitle;
 
             iconArray[id] = songIcon;
@@ -221,9 +235,14 @@ class CreditsState extends MusicBeatState
         }else if (data[0].trim().length == 0){
             return;
         }else{
+			return;
+			/*
             songTitle = new Alphabet(0, 240 * id, data[0], true);
-            songTitle.screenCenter(X);
+			songTitle.forceX = 10;
+            //songTitle.screenCenter(X);
             songTitle.targetX = songTitle.x;
+			*/
+			
         }
 
         songTitle.sowyFreeplay = true;
@@ -233,6 +252,7 @@ class CreditsState extends MusicBeatState
 	}
 
 	var moveTween:FlxTween;
+	var curTitle:Alphabet;
 	
 	function updateSelection(playSound:Bool = true)
 	{
@@ -240,6 +260,7 @@ class CreditsState extends MusicBeatState
 			FlxG.sound.play(Paths.sound("scrollMenu"), 0.4);
 
 		// selectedSong = titleArray[curSelected];
+		curTitle = null;
 
 		for (id in 0...titleArray.length)
 		{
@@ -262,25 +283,14 @@ class CreditsState extends MusicBeatState
                     hintText.text = "";
                 }else{
                     hintText.text = descText;
+					hintText.y = title.y + 100;
 
-                    hintBg.scale.y = 30 + hintText.height;
-                    hintBg.updateHitbox();
-                    hintBg.y = FlxG.height - hintBg.height - 10;
+					curTitle = title;
 
-                    hintText.y = hintBg.y + hintBg.height * 0.5 - hintText.height * 0.5;
-
-                    //// FUCK
-                    var sby = hintBg.y + 15;
-                    var eby = hintBg.y;
-                    var sty = hintText.y + 15;
-                    var ety = hintText.y;
-                    var sba = hintBg.alpha;
 					if (moveTween != null)
 						moveTween.cancel();
                     moveTween = FlxTween.num(0, 1, 0.25, {ease: FlxEase.sineOut}, function(v){
-                        hintBg.y = FlxMath.lerp(sby, eby, v);
-                        hintText.y = FlxMath.lerp(sty, ety, v);
-                        hintBg.alpha = FlxMath.lerp(sba, 0.6, v);
+                        hintText.alpha = v;
                     });
                 }
 
@@ -306,6 +316,9 @@ class CreditsState extends MusicBeatState
 	{
 		if (FlxG.sound.music != null && FlxG.sound.music.volume < 0.7)
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+
+		if (curTitle != null)
+			hintText.x = curTitle.x;
 
 		////
 		var speed = FlxG.keys.pressed.SHIFT ? 2 : 1;

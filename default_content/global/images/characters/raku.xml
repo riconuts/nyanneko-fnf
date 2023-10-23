@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="raku.png" width="2889" height="2953">
+  <SubTexture name="raku0031" x="0" y="0"  width="569" height="759" frameX="-88" frameY="-5" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0036" x="569" y="0"  width="568" height="737" frameX="-99" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0033" x="0" y="759" width="737" height="568" rotated="true"  frameX="-99" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0020" x="1137" y="0" width="625" height="718" rotated="true"  frameX="-15" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0015" x="0" y="1327"  width="708" height="596" frameX="-7" frameY="-168" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0017" x="1137" y="718" width="625" height="700" rotated="true"  frameX="-47" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0053" x="1762" y="0"  width="620" height="690" frameX="-77" frameY="-74" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0047" x="708" y="1418" width="665" height="452" rotated="true"  frameX="-175" frameY="-99" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0010" x="1373" y="1418" width="655" height="429" rotated="true"  frameX="-203" frameY="-109" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0013" x="1762" y="690"  width="440" height="655" frameX="-192" frameY="-109" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0001" x="0" y="1923" width="652" height="493" rotated="true"  frameX="-166" frameY="-112" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0007" x="652" y="1923" width="643" height="435" rotated="true"  frameX="-199" frameY="-121" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0004" x="1295" y="1870" width="627" height="482" rotated="true"  frameX="-171" frameY="-137" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0056" x="737" y="737"  width="376" height="626" frameX="-349" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0041" x="2382" y="0"  width="507" height="626" frameX="-218" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0044" x="2382" y="626"  width="504" height="626" frameX="-221" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0050" x="1922" y="1847"  width="613" height="551" frameX="-119" frameY="-213" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0039" x="2028" y="1345" width="607" height="489" rotated="true"  frameX="-269" frameY="-157" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0023" x="0" y="2416"  width="604" height="537" frameX="-119" frameY="-227" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0062" x="604" y="2416" width="586" height="531" rotated="true"  frameX="-169" frameY="-178" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0059" x="1190" y="2358"  width="530" height="585" frameX="-171" frameY="-179" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0025" x="1720" y="2398"  width="578" height="544" frameX="-125" frameY="-220" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0028" x="2298" y="2398"  width="570" height="544" frameX="-125" frameY="-220" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0002" x="0" y="1923" width="652" height="493" rotated="true"  frameX="-166" frameY="-112" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0003" x="0" y="1923" width="652" height="493" rotated="true"  frameX="-166" frameY="-112" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0005" x="1295" y="1870" width="627" height="482" rotated="true"  frameX="-171" frameY="-137" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0006" x="1295" y="1870" width="627" height="482" rotated="true"  frameX="-171" frameY="-137" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0008" x="652" y="1923" width="643" height="435" rotated="true"  frameX="-199" frameY="-121" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0009" x="652" y="1923" width="643" height="435" rotated="true"  frameX="-199" frameY="-121" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0011" x="1373" y="1418" width="655" height="429" rotated="true"  frameX="-203" frameY="-109" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0012" x="1373" y="1418" width="655" height="429" rotated="true"  frameX="-203" frameY="-109" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0014" x="1762" y="690"  width="440" height="655" frameX="-192" frameY="-109" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0016" x="0" y="1327"  width="708" height="596" frameX="-7" frameY="-168" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0018" x="1137" y="718" width="625" height="700" rotated="true"  frameX="-47" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0019" x="1137" y="718" width="625" height="700" rotated="true"  frameX="-47" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0021" x="1137" y="0" width="625" height="718" rotated="true"  frameX="-15" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0022" x="1137" y="0" width="625" height="718" rotated="true"  frameX="-15" frameY="-139" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0024" x="0" y="2416"  width="604" height="537" frameX="-119" frameY="-227" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0026" x="1720" y="2398"  width="578" height="544" frameX="-125" frameY="-220" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0027" x="1720" y="2398"  width="578" height="544" frameX="-125" frameY="-220" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0029" x="2298" y="2398"  width="570" height="544" frameX="-125" frameY="-220" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0030" x="2298" y="2398"  width="570" height="544" frameX="-125" frameY="-220" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0032" x="0" y="0"  width="569" height="759" frameX="-88" frameY="-5" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0034" x="0" y="759" width="737" height="568" rotated="true"  frameX="-99" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0035" x="0" y="759" width="737" height="568" rotated="true"  frameX="-99" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0037" x="569" y="0"  width="568" height="737" frameX="-99" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0038" x="569" y="0"  width="568" height="737" frameX="-99" frameY="-27" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0040" x="2028" y="1345" width="607" height="489" rotated="true"  frameX="-269" frameY="-157" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0042" x="2382" y="0"  width="507" height="626" frameX="-218" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0043" x="2382" y="0"  width="507" height="626" frameX="-218" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0045" x="2382" y="626"  width="504" height="626" frameX="-221" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0046" x="2382" y="626"  width="504" height="626" frameX="-221" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0048" x="708" y="1418" width="665" height="452" rotated="true"  frameX="-175" frameY="-99" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0049" x="708" y="1418" width="665" height="452" rotated="true"  frameX="-175" frameY="-99" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0051" x="1922" y="1847"  width="613" height="551" frameX="-119" frameY="-213" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0052" x="1922" y="1847"  width="613" height="551" frameX="-119" frameY="-213" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0054" x="1762" y="0"  width="620" height="690" frameX="-77" frameY="-74" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0055" x="1762" y="0"  width="620" height="690" frameX="-77" frameY="-74" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0057" x="737" y="737"  width="376" height="626" frameX="-349" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0058" x="737" y="737"  width="376" height="626" frameX="-349" frameY="-138" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0060" x="1190" y="2358"  width="530" height="585" frameX="-171" frameY="-179" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0061" x="1190" y="2358"  width="530" height="585" frameX="-171" frameY="-179" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0063" x="604" y="2416" width="586" height="531" rotated="true"  frameX="-169" frameY="-178" frameWidth="1053" frameHeight="764"/>
+  <SubTexture name="raku0064" x="604" y="2416" width="586" height="531" rotated="true"  frameX="-169" frameY="-178" frameWidth="1053" frameHeight="764"/>
+</TextureAtlas>

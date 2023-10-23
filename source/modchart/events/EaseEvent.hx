@@ -34,7 +34,10 @@ class EaseEvent extends BaseEvent
 		}
 		else{
 			finished = true;
+
 			progress = 1;
+			value = easeFunc(1);
+			callback(this, value, curStep);
 		}
 	}
 }

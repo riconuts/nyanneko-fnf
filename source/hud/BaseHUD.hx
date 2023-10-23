@@ -317,7 +317,7 @@ class SowyBar extends flixel.group.FlxSpriteGroup{
 		var leftW:Int = Math.floor(fillW * relValue);
 		var rightW:Int = fillW - leftW;
 
-		leftSide.alpha = leftColor.alphaFloat;
+		leftSide.alpha = leftColor.alphaFloat * alpha;
 		leftSide.color = leftColor.to24Bit();
 
 		leftSide.setPosition(bg.x + fillX, bg.y + fillY);
@@ -329,7 +329,7 @@ class SowyBar extends flixel.group.FlxSpriteGroup{
 			leftSide.visible = false;
 		}
 		
-		rightSide.alpha = rightColor.alphaFloat;
+		rightSide.alpha = rightColor.alphaFloat * alpha;
 		rightSide.color = rightColor.to24Bit();
 
 		rightSide.setPosition(leftSide.x + leftW, leftSide.y);

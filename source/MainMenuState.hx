@@ -116,8 +116,7 @@ class MainMenuState extends MusicBeatState
 
 		////
 		FlxG.camera.bgColor = 0xFFFFCC00;
-
-		// dynamism haha i love that song
+		
 		artWidth = Math.ceil(FlxG.width * (680/1280));
 		textWidth = Math.ceil(FlxG.width * (600/1280));
 		

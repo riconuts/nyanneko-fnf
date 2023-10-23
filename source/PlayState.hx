@@ -1296,10 +1296,14 @@ class PlayState extends MusicBeatState
 	var finishTimer:FlxTimer = null;
 
 	// For being able to mess with the sprites on Lua
-	public var introAlts:Array<Null<String>> = [null, 'ready', 'set', 'go'];
+	public var introAlts:Array<Null<String>> = ["onyourmarks", 'ready', 'set', 'go'];
+	public var introSnds:Array<Null<String>> = ["intro3", 'intro2', 'intro1', 'introGo'];
 
-	public var countdownSpr:FlxSprite;
-	var countdownTwn:FlxTween;
+	public var countdownSpr:Null<FlxSprite>;
+	public var countdownSnd:Null<FlxSound>;
+	
+	private var countdownTwn:FlxTween;
+	
 	public static var startOnTime:Float = 0;
 
 	public function startCountdown():Void
@@ -1318,53 +1322,42 @@ class PlayState extends MusicBeatState
 		if (skipCountdown || startOnTime > 0)
 			skipArrowStartTween = true;
 
-		for(i in 0...4){
-			playerStrums.add(new StrumNote(0, 0, 0));
-			opponentStrums.add(new StrumNote(0, 0, 0));
-		}
-		/* 		
-		generateStaticArrows(0);
-		generateStaticArrows(1);
-		for (i in 0...playerStrums.length) {
-			setOnScripts('defaultPlayerStrumX' + i, playerStrums.members[i].x);
-			setOnScripts('defaultPlayerStrumY' + i, playerStrums.members[i].y);
-		}
-		for (i in 0...opponentStrums.length) {
-			setOnScripts('defaultOpponentStrumX' + i, opponentStrums.members[i].x);
-			setOnScripts('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
-		}
+		callOnScripts('preReceptorGeneration'); // backwards compat, deprecated
+		callOnScripts('onReceptorGeneration');
 
-		modManager.receptors = [playerStrums.members, opponentStrums.members]; 
-		*/
-
-		callOnScripts('preReceptorGeneration');
-		//playerField.generateStrums();
-		//dadField.generateStrums();
 		for(field in playfields.members)
 			field.generateStrums();
 
-		callOnScripts('postReceptorGeneration');
+		callOnScripts('postReceptorGeneration'); // deprecated
+		callOnScripts('onReceptorGenerationPost');
+
 		for(field in playfields.members)
 			field.fadeIn(isStoryMode || skipArrowStartTween); // TODO: check if its the first song so it should fade the notes in on song 1 of story mode
 		modManager.receptors = [playerField.strumNotes, dadField.strumNotes];
 
-		callOnScripts('preModifierRegister');
+		callOnScripts('preModifierRegister'); // deprecated
+		callOnScripts('onModifierRegister');
 		modManager.registerDefaultModifiers();
-		callOnScripts('postModifierRegister');
+		callOnScripts('postModifierRegister'); // deprecated
+		callOnScripts('onModifierRegisterPost');
 
+		/* 		
 		if(midScroll){
 			modManager.setValue("opponentSwap", 0.5);
 			for(field in notefields.members){
 				if(field.field==null)continue;
-				field.alpha = field.field.isPlayer ? 1 : 0.4;
+				field.alpha = field.field.isPlayer ? 0 : 1;
 			}
 			
-		}
+		} 
+		*/
 
 		startedCountdown = true;
 		Conductor.songPosition = -Conductor.crochet * 5;
 		setOnScripts('startedCountdown', true);
 		callOnScripts('onCountdownStarted');
+
+		callOnScripts("generateModchart"); // this is where scripts should generate modcharts from here on out lol
 
 		if(startOnTime < 0)
 			startOnTime = 0;
@@ -1406,15 +1399,14 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-
-			var sprImage:Null<String> = introAlts[swagCounter];
-			if (sprImage != null){
+			var sprImage:Null<flixel.graphics.FlxGraphic> = Paths.image(introAlts[swagCounter]); // hopefully never gives a nor lol
+			if (sprImage != null){			
 				if (countdownTwn != null)
 					countdownTwn.cancel();
 				if (countdownSpr != null)
 					remove(countdownSpr).destroy();
 
-				countdownSpr = new FlxSprite(0, 0, Paths.image(sprImage));
+				countdownSpr = new FlxSprite(0, 0, sprImage);
 				countdownSpr.scrollFactor.set();
 				countdownSpr.updateHitbox();
 				countdownSpr.cameras = [camHUD];
@@ -1434,15 +1426,16 @@ class PlayState extends MusicBeatState
 				});
 			}
 
-			var sound = switch (swagCounter){
-				case 0: 'intro3' + introSoundsSuffix;
-				case 1: 'intro2' + introSoundsSuffix;
-				case 2: 'intro1' + introSoundsSuffix;
-				case 3: 'introGo' + introSoundsSuffix;
-				default: null;
-			};
-			if(sound != null)
-				FlxG.sound.play(Paths.sound(sound), 0.6);
+			var soundName:Null<String> = introSnds[swagCounter];
+			if (soundName != null){
+				var snd:FlxSound = null; 
+				snd = FlxG.sound.play(Paths.sound(soundName + introSoundsSuffix), 0.6, false, null, true, ()->{
+					if (countdownSnd == snd) countdownSnd = null;
+				});
+				//snd.effect = ClientPrefs.ruin ? sndEffect : null;
+				
+				countdownSnd = snd;
+			}
 
 			callOnHScripts('onCountdownTick', [swagCounter, tmr]);
 			#if LUA_ALLOWED
@@ -2691,6 +2684,8 @@ class PlayState extends MusicBeatState
 	}
 
 	public var isDead:Bool = false; //Don't mess with this on Lua!!!
+	public var nyandeathvideos:Int = 3;
+
 	function doDeathCheck(?skipHealthCheck:Bool = false) {
 		if (
 			(
@@ -2719,7 +2714,7 @@ class PlayState extends MusicBeatState
 					timer.active = true;
 
 				persistentUpdate = false;
-				persistentDraw = false;
+				//persistentDraw = false;
 
 				if(instaRespawn){
 					isDead = true;
@@ -2730,7 +2725,13 @@ class PlayState extends MusicBeatState
 					
 					inst.stop();
 					vocals.stop();
-					
+
+					MusicBeatState.switchState(
+						new VideoPlayerState(Paths.video('death${(PlayState.deathCounter+2) % nyandeathvideos + 1}'), ()->{
+							MusicBeatState.switchState(new PlayState());
+						})
+					);
+					/*
 					openSubState(new GameOverSubstate(
 						char.getScreenPosition().x - char.positionArray[0],
 						char.getScreenPosition().y - char.positionArray[1],
@@ -2738,6 +2739,7 @@ class PlayState extends MusicBeatState
 						camFollowPos.y,
 						char.isPlayer
 					));
+					*/
 				}
 
 				#if discord_rpc
@@ -3354,6 +3356,9 @@ class PlayState extends MusicBeatState
 	var msTotal = 0.0;
 
 	private function displayJudgment(image:String){
+		var graphic = Paths.image(image);
+		if (graphic == null) return;
+
 		var rating:RatingSprite;
 		var time = (Conductor.stepCrochet * 0.001);
 
@@ -3369,9 +3374,9 @@ class PlayState extends MusicBeatState
 				rating.tween.destroy();
 			}
 
-			rating.scale.set(0.7 * 1.1, 0.7 * 1.1);
+			rating.scale.set(1.1, 1.1);
 
-			rating.tween = FlxTween.tween(rating.scale, {x: 0.7, y: 0.7}, 0.1, {
+			rating.tween = FlxTween.tween(rating.scale, {x: 1, y: 1}, 0.1, {
 				ease: FlxEase.quadOut,
 				onComplete: function(tween:FlxTween)
 				{
@@ -3392,7 +3397,7 @@ class PlayState extends MusicBeatState
 		else
 		{
 			rating = ratingGroup.recycle(RatingSprite);
-			rating.scale.set(0.7, 0.7);
+			rating.scale.set(1, 1);
 
 			rating.moves = true;
 			rating.acceleration.y = 550;
@@ -3416,7 +3421,7 @@ class PlayState extends MusicBeatState
 		rating.alpha = ClientPrefs.judgeOpacity;
 
 		rating.visible = showRating;
-		rating.loadGraphic(Paths.image(image));
+		rating.loadGraphic(graphic);
 		rating.updateHitbox();
 
 		rating.screenCenter();

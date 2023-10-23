@@ -1,0 +1,32 @@
+var lastAnim = "";
+var totalE = 0.0;
+
+var frameRate = 1/36;
+
+function playNoteAnim(animToPlay, note)
+{
+	if (!note.isSustainNote || note.nextNote.parent != note.parent || animToPlay != "singLEFT"){
+		return;
+	}
+
+	var theAnim = animToPlay + "-loop";
+	
+	if (theAnim != lastAnim){
+		totalE = 0;
+		lastAnim = theAnim;
+		this.playAnim(theAnim, false, false, 0);
+	}else
+		this.playAnim(theAnim, false, false, Math.floor(totalE/frameRate)%6);
+}
+
+function onAnimPlayed(name){
+	if (StringTools.endsWith(name, "miss"))
+		this.specialAnim = true;
+	
+	if (this.idleSuffix == "-sugoi" && name != "idle-sugoi")
+		this.offset.y -= 20;
+}
+
+function update(e){
+	totalE += e;
+}

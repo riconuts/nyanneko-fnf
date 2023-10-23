@@ -1,0 +1,88 @@
+
+
+function flipChar(char)
+{
+	char.flipX = !char.flipX;
+	char.xFacing = -char.xFacing;
+}
+
+function onCreatePost()
+{
+	game.showDebugTraces = true;
+
+	flipChar(game.dad);
+	flipChar(game.boyfriend);
+	
+	//game.healthBar.flipDirection = !game.healthBar.flipDirection;
+	
+	//game.camHUD.visible = false;
+	
+	var tail = game.dad.y + game.dad.height;
+	var realMid = tail - FlxG.height * 0.5;
+	var curMid = game.dad.getCamera()[1];
+	game.camGame.scrollOffset.y += realMid - curMid - 10;
+
+	Conductor.changeBPM(130);
+}
+
+function onSongStart(){
+	Conductor.changeBPM(260);
+}
+
+function onEvent(name, value1, value2)
+{
+	switch (name){
+		case "disableIconBeat": game.hud.iconBeat = false;
+		case "iconBeat": game.healthBar.iconScale = 1.2;
+		case "enableIconBeat": game.hud.iconBeat = true;		
+	}
+}
+
+function onStartCountdown()
+{
+	script.set("onStartCountdown", null);
+	
+	if (PlayState.seenCutscene || game.playOpponent || PlayState.chartingMode) return;
+	
+	PlayState.seenCutscene = true;
+	
+	var cam = game.camOverlay;
+	
+	var bg = new FlxSprite().makeGraphic(cam.width, cam.height, 0xFF000000);
+	bg.cameras = [cam];
+	game.add(bg);
+	
+	var funkay = new FlxSprite();
+	funkay.frames = Paths.getSparrowAtlas("funkay");
+	funkay.animation.addByPrefix("idle", "raku", 24, true);
+	funkay.animation.play("idle");
+	funkay.updateHitbox();
+	funkay.screenCenter();
+	funkay.cameras = [cam];
+	game.add(funkay);
+	
+	FlxTween.tween(funkay, {alpha: 0}, 0.4, {ease: FlxEase.linear, startDelay: 1.6, onComplete: (twn)->{
+		funkay.destroy();
+		funkay = null;
+		
+		FlxTween.tween(bg, {alpha: 0}, 0.8, {ease: FlxEase.circOut, startDelay: 1.6, onStart: (twn)->{game.startCountdown();}, onComplete: (twn)->{
+			bg.destroy();
+			bg = null;
+		}});
+	}});
+	
+	return Function_Stop;
+}
+
+function onCountdownStarted(){
+	var cam1 = game.dad.getCamera();
+	var cam2 = game.boyfriend.getCamera();
+	
+	game.sectionCamera.set(
+		(cam1[0] + cam2[0]) * 0.5, 
+		(cam1[1] + cam2[1]) * 0.5
+	);
+	game.camFollowPos.setPosition(game.sectionCamera.x, game.sectionCamera.y - 120);
+	
+	game.modManager.queueSet(-16, "opponentSwap", 1, -1);
+}
