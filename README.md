@@ -13,12 +13,12 @@ You'll also need to install a couple things that involve Gits. To do this, you n
 You'll also need to install each one of these Haxe libraries.
 
 ```
-haxelib install flixel 5.2.2
-haxelib install flixel-addons
+haxelib install flixel 5.3.1
+haxelib install flixel-addons 3.0.2
 haxelib install flixel-ui
 
 haxelib install hscript
-haxelib install hxCodec
+haxelib install hxCodec 2.3.3
 haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
 haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit
 ```
